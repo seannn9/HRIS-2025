@@ -1,0 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+@import "tailwindcss";
+@source "../views";
+
+
+@theme {
+    --color-primary: #1290C3;
+    --color-accent1: #D23426;
+    --color-accent2: #F18F22;
+    --color-accent3: #84C148;
+    --font-lato: "Lato", serif;
+}
