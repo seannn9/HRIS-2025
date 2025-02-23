@@ -23,3 +23,8 @@ test("unauthenticated users are redirected to '/login'", function () {
     $response = $this->get('/');
     $response->assertRedirect('/login');
 });
+
+test("users accessing '/authenticate' with GET method returns 404", function () {
+    $response = $this->get('/authenticate');
+    $response->assertStatus(404);
+});

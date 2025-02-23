@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\LoginController;
-use App\Http\Middleware\EnsureUserIsAuthenticated;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest'])->group(function () {
@@ -19,4 +18,6 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::get("/", function () {
         return view('dashboard.home');
     })->name("home");
+
+    Route::get("/logout", [LoginController::class, 'logout'])->name("logout");
 });
