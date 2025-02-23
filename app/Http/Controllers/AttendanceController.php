@@ -70,8 +70,11 @@ class AttendanceController extends Controller
         return response()->noContent();
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        // TODO    
+        if ($request->user()->cannot('export', Attendance::class)) abort(403);
+        
+        // TODO: Implement export logic (CSV, PDF, etc.)
+        return response()->json(['message' => 'Export functionality']);
     }
 }

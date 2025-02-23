@@ -4,7 +4,9 @@ use App\Http\Controllers\AttendanceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Protected attendance routes
+// TODO: Do a massive refactor for Sanctum api guards. It should not rely on
+// Web sesssion rather it should rely on API 
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/attendance/list', [AttendanceController::class, 'index'])
         ->name('attendance.list')
