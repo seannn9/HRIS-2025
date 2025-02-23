@@ -11,4 +11,11 @@ enum UserStatus: string
     {
         return array_column(self::cases(), 'value');
     }
+    
+    /**
+     * Checks if user is active
+     */
+    public function isActive() {
+        return $this == UserStatus::ACTIVE;
+    }
 }
