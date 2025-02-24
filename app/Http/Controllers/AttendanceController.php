@@ -51,7 +51,7 @@ class AttendanceController extends Controller
         return response()->json($attendance, 201);
     }
 
-    public function show(Request $request, int $id)
+    public function show(Request $request, string $id)
     {
         $attendance = Attendance::where('id', '=', $id)->first() ?? abort(404);
 
@@ -60,7 +60,7 @@ class AttendanceController extends Controller
         return response()->json($attendance->load('user'));
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, string $id)
     {
         $attendance = Attendance::where('id', '=', $id)->first() ?? abort(404);
 
@@ -82,7 +82,7 @@ class AttendanceController extends Controller
         return response()->json($attendance);
     }
 
-    public function delete(Request $request, int $id)
+    public function destroy(Request $request, string $id)
     {
         $attendance = Attendance::where('id', '=', $id)->first() ?? abort(404);
 

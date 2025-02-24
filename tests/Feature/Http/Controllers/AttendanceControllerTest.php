@@ -17,7 +17,7 @@ describe('Attendance Controller as Admin', function () {
         Attendance::factory()->create(['user_id' => $this->user->id, 'date' => '2023-01-01', 'type' => AttendanceType::TIME_IN]);
         Attendance::factory()->create(['user_id' => $this->user->id, 'date' => '2023-01-02', 'type' => AttendanceType::TIME_OUT]);
 
-        $response = $this->getJson('/api/attendance/list?date_from=2023-01-01&date_to=2023-01-01&type=time_in');
+        $response = $this->getJson('/api/attendance?date_from=2023-01-01&date_to=2023-01-01&type=time_in');
         
         $response
             ->assertOk()
@@ -25,7 +25,7 @@ describe('Attendance Controller as Admin', function () {
     });
 
     it('can create new attendance record', function () {
-        $response = $this->postJson('/api/attendance/create', [
+        $response = $this->postJson('/api/attendance', [
             'user_id' => $this->user->id,
             'date' => now()->format('Y-m-d'),
             'shift_type' => ShiftType::MORNING->value,
@@ -91,7 +91,7 @@ describe('Attendance Controller as Admin', function () {
             'time' => '17:00'
         ]);
 
-        $response = $this->getJson('/api/attendance/list?group_by=user');
+        $response = $this->getJson('/api/attendance?group_by=user');
         
         $response
             ->assertOk()
