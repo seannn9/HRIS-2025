@@ -18,8 +18,8 @@ class CheckUserRole
     {
         $roles = empty($roles) ? [null] : $roles;
 
-        if (!empty($roles) && !in_array(Auth::user()->role->value, $roles)) {
-            abort(403, 'Forbidden'); // User role not allowed
+        if (!in_array(Auth::user()->role->value, $roles)) {
+            abort(403, 'Forbidden');
         }
         
         return $next($request);

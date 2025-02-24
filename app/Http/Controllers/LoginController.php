@@ -38,9 +38,9 @@ class LoginController extends Controller
 
         if ($success) {
             $request->session()->regenerate();
-
+            
             return redirect()
-                ->intended('/')
+                ->route("dashboard")
                 ->withSuccess("Login successful.");
         }
  

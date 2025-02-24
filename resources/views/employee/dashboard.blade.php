@@ -1,3 +1,3 @@
 <x-layout.guest>
-    Welcome!
+    Welcome employee!
 </x-layout.guest>
