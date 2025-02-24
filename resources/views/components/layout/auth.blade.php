@@ -1,3 +1,6 @@
-<x-layout.root>
-    
-</x-layout.root>
+@extends('components.layout.root')
+
+@section('content')
+    <x-topbar />
+    {{ $slot }}
+@endsection

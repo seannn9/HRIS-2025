@@ -6,8 +6,8 @@
         <div>
             <x-form.label :name="$name" :label="$label" />
 
-            <div class="grid grid-cols-1">
-                <input aria-describedby="{{ $name }}-error" aria-invalid="true"
+            <div class="grid grid-cols-1 mt-2">
+                <input aria-describedby="{{ $name }}-error" autocomplete="{{ $name }}" aria-invalid="true"
                     id="{{ $name }}" 
                     name="{{ $name }}"
                     {{

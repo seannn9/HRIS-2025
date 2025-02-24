@@ -28,5 +28,9 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         };
     })->name("dashboard");
 
+    Route::get("/attendance", function () {
+        return view('attendance.index');
+    })->name("attendance");
+
     Route::get("/logout", [LoginController::class, 'logout'])->name("logout");
 });
