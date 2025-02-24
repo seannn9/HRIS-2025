@@ -4,33 +4,24 @@ use App\Http\Controllers\AttendanceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// TODO: Do a massive refactor for Sanctum api guards. It should not rely on
-// Web sesssion rather it should rely on API 
-
 Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::get('/attendance/list', [AttendanceController::class, 'index'])
-        ->name('attendance.list')
-        ->middleware('ability:fetch-attendance');
+        ->name('attendance.list');
 
     Route::post('/attendance/create', [AttendanceController::class, 'store'])
-        ->name('attendance.create')
-        ->middleware('ability:fetch-attendance,create-attendance');
+        ->name('attendance.create');
 
-    Route::get('/attendance/{attendance}', [AttendanceController::class, 'show'])
-        ->name('attendance.view')
-        ->middleware('ability:fetch-attendance');
+    Route::get('/attendance/{id}', [AttendanceController::class, 'show'])
+        ->name('attendance.view');
 
-    Route::patch('/attendance/{attendance}', [AttendanceController::class, 'update'])
-        ->name('attendance.update')
-        ->middleware('ability:update-attendance');
+    Route::patch('/attendance/{id}', [AttendanceController::class, 'update'])
+        ->name('attendance.update');
 
-    Route::delete('/attendance/{attendance}', [AttendanceController::class, 'delete'])
-        ->name('attendance.delete')
-        ->middleware('ability:delete-attendance');
+    Route::delete('/attendance/{id}', [AttendanceController::class, 'delete'])
+        ->name('attendance.delete');
 
     Route::get('/attendance/export', [AttendanceController::class, 'export'])
-        ->name('attendance.export')
-        ->middleware('ability:export-attendance');
+        ->name('attendance.export');
 
     Route::get('/user', function (Request $request) {
         return $request->user();

@@ -46,4 +46,25 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class);
     }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    
+    public function isAdmin()
+    {
+        return $this->role == UserRole::ADMIN;
+    }
+
+    public function isHr()
+    {
+        return $this->role == UserRole::HR;
+    }
+
+    public function isEmployee()
+    {
+        return $this->role == UserRole::EMPLOYEE;
+    }
 }

@@ -9,12 +9,12 @@ class AttendancePolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->role->isAdmin() || $user->role->isHr();
+        return true;
     }
 
     public function view(User $user, Attendance $attendance): bool
     {
-        return $user->role->isAdmin() || $user->role->isHr() || $attendance->user_id === $user->id;
+        return $user->isAdmin() || $user->isHr() || $attendance->user_id === $user->id;
     }
 
     public function create(User $user): bool
@@ -24,11 +24,11 @@ class AttendancePolicy
 
     public function update(User $user, Attendance $attendance): bool
     {
-        return $user->role->isAdmin() || $user->role->isHr() || $attendance->user_id === $user->id;
+        return $user->isAdmin() || $user->isHr() || $attendance->user_id === $user->id;
     }
 
     public function delete(User $user, Attendance $attendance): bool
     {
-        return $user->role->isAdmin();
+        return $user->isAdmin() || $user->isHr();
     }
 }

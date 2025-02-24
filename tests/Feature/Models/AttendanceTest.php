@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 describe('Attendance Model', function () {
     beforeEach(function () {
-        $this->attendance = Attendance::factory()->create();
+        $this->attendance = Attendance::factory()->create(['type' => AttendanceType::TIME_OUT->value]);
     });
 
     it('belongs to a user', function () {
@@ -25,7 +25,7 @@ describe('Attendance Model', function () {
                 'type' => AttendanceType::class,
                 'work_mode' => WorkMode::class,
                 'status' => AttendanceStatus::class,
-                'time' => 'datetime:H:i:s',
+                'time' => 'datetime',
             ]);
     });
 
@@ -35,22 +35,24 @@ describe('Attendance Model', function () {
             'type' => AttendanceType::TIME_IN
         ]);
         
-        $filtered = Attendance::filter(new Request([
+        $request = new Request([
             'date_from' => '2023-01-01',
-            'type' => 'time_in'
-        ]))->get();
+            'type' => AttendanceType::TIME_IN->value
+        ]);
+        $filtered = Attendance::filter($request->all())->get();
 
         expect($filtered)->toHaveCount(1)
             ->and($filtered->first()->id)->toBe($attendance->id);
     });
 
     it('applies grouped data scope correctly', function () {
-        Attendance::factory()->count(3)->create(['user_id' => 1]);
+        $user = User::factory()->create();
+        Attendance::factory()->count(3)->create(['user_id' => $user->id]);
         
-        $grouped = Attendance::groupedData()->get();
+        $grouped = Attendance::groupedData('user')->get();
         
-        expect($grouped)->toHaveCount(1)
-            ->and($grouped->first()->total_entries)->toBe(3);
+        expect($grouped)->toHaveCount(2)
+            ->and($grouped->last()->total_entries)->toBe(3);
     });
 
     it('has unique ticket number', function () {
@@ -64,7 +66,8 @@ describe('Attendance Model', function () {
 
     it('prevents duplicate entries for same user/date/type', function () {
         $data = [
-            'user_id' => 1,
+            'id' => random_int(1000, 9506),
+            'user_id' => $this->attendance->user()->get()->first()->id,
             'date' => '2023-01-01',
             'type' => AttendanceType::TIME_IN
         ];

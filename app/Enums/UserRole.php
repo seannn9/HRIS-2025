@@ -12,19 +12,4 @@ enum UserRole: string
     {
         return array_column(self::cases(), 'value');
     }
-
-    public function isAdmin()
-    {
-        return $this == UserRole::ADMIN;
-    }
-
-    public function isHr()
-    {
-        return $this == UserRole::HR;
-    }
-
-    public function isEmployee()
-    {
-        return $this == UserRole::EMPLOYEE;
-    }
 }
