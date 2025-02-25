@@ -1,4 +1,4 @@
-@props(['label', 'name', 'options'])
+@props(['label', 'name', 'options', 'selected'])
 
 
 <div>
@@ -13,7 +13,11 @@
                 ])
             }}
             >
-            <option value="" selected disabled hidden>Choose an option</option>
+
+            @if (!isset($selected))
+                <option value="" selected disabled hidden>Choose an option</option>
+            @endif
+
             @foreach($options as $value => $label)
                 <option value="{{ $value }}">{{ $label }}</option>
             @endforeach
