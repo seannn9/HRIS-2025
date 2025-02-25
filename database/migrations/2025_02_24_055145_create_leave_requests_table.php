@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('leave_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
             $table->enum('leave_type', LeaveType::values());
             $table->date('start_date');
             $table->date('end_date');
-            $table->text('reason')->nullable();
-            $table->json('shift_covered')->nullable();
+            $table->text('reason');
+            $table->json('shift_covered');
             $table->enum('status', LeaveStatus::values())->default(LeaveStatus::PENDING->value);
-            $table->string('ticket_number')->unique()->nullable();
+            $table->string('ticket_number')->unique();
             $table->timestamps();
         });
     }

@@ -2,16 +2,19 @@
 
 use App\Models\LeaveRequest;
 use App\Enums\{LeaveStatus, LeaveType, UserRole};
+use App\Models\Employee;
 use App\Models\User;
 
 describe('Leave Request Controller as an Employee', function () {
     beforeEach(function() {
-        $this->user = User::factory()->create(['role' => UserRole::EMPLOYEE]);
-        $this->actingAs($this->user);
+        $user = User::factory()->create(['role' => UserRole::EMPLOYEE]);
+        $this->actingAs($user);
+        $this->employee = Employee::factory()->create(['user_id' => $user->id]);
     });
 
     it('can create leave request', function () {
         $response = $this->postJson('/api/leave', [
+            'employee_id' => $this->employee->id,
             'leave_type' => LeaveType::SICK->value,
             'start_date' => now()->addDay()->format('Y-m-d'),
             'end_date' => now()->addDays(3)->format('Y-m-d'),
@@ -25,7 +28,7 @@ describe('Leave Request Controller as an Employee', function () {
     it('cannot update approved leave request', function () {
         $leave = LeaveRequest::factory()->create([
             'status' => LeaveStatus::APPROVED,
-            'user_id' => $this->user->id
+            'employee_id' => $this->employee->id
         ]);
     
         $response = $this->putJson("/api/leave/{$leave->id}", [
@@ -38,7 +41,7 @@ describe('Leave Request Controller as an Employee', function () {
     it('cannot update leave request status using patch method only', function () {
         $leave = LeaveRequest::factory()->create([
             'status' => LeaveStatus::PENDING,
-            'user_id' => $this->user->id
+            'employee_id' => $this->employee->id
         ]);
     
         $response = $this->patchJson("/api/leave/{$leave->id}", [
@@ -51,7 +54,7 @@ describe('Leave Request Controller as an Employee', function () {
     it('cannot update leave request status using \'/status\' endpoint', function () {
         $leave = LeaveRequest::factory()->create([
             'status' => LeaveStatus::PENDING,
-            'user_id' => $this->user->id
+            'employee_id' => $this->employee->id
         ]);
     
         $response = $this->patchJson("/api/leave/{$leave->id}/status", [
@@ -74,12 +77,14 @@ describe('Leave Request Controller as an Employee', function () {
 
 describe('Leave Request Controller as Admin', function () {
     beforeEach(function() {
-        $this->user = User::factory()->create(['role' => UserRole::ADMIN]);
-        $this->actingAs($this->user);
+        $user = User::factory()->create(['role' => UserRole::ADMIN]);
+        $this->actingAs($user);
+        $this->employee = Employee::factory()->create(['user_id' => $user->id]);
     });
 
     it('can create leave request', function () {
         $response = $this->postJson('/api/leave', [
+            'employee_id' => $this->employee->id,
             'leave_type' => LeaveType::SICK->value,
             'start_date' => now()->addDay()->format('Y-m-d'),
             'end_date' => now()->addDays(3)->format('Y-m-d'),
@@ -113,12 +118,14 @@ describe('Leave Request Controller as Admin', function () {
 
 describe('Leave Request Controller as HR', function () {
     beforeEach(function() {
-        $this->user = User::factory()->create(['role' => UserRole::HR]);
-        $this->actingAs($this->user);
+        $user = User::factory()->create(['role' => UserRole::HR]);
+        $this->actingAs($user);
+        $this->employee = Employee::factory()->create(['user_id' => $user->id]);
     });
 
     it('can create leave request', function () {
         $response = $this->postJson('/api/leave', [
+            'employee_id' => $this->employee->id,
             'leave_type' => LeaveType::SICK->value,
             'start_date' => now()->addDay()->format('Y-m-d'),
             'end_date' => now()->addDays(3)->format('Y-m-d'),

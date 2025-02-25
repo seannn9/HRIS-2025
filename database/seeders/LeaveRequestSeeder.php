@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Employee;
 use App\Models\LeaveRequest;
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class LeaveRequestSeeder extends Seeder
@@ -14,12 +13,12 @@ class LeaveRequestSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all();
+        $employees = Employee::all();
 
-        foreach ($users as $user) {
+        foreach ($employees as $employee) {
             LeaveRequest::factory()
                 ->count(50)
-                ->create(['user_id' => $user->id]);
+                ->create(['employee_id' => $employee->id]);
         }
     }
 }

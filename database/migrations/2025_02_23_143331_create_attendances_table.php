@@ -13,15 +13,19 @@ return new class extends Migration {
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
             $table->date('date');
             $table->enum('shift_type', ShiftType::values());
             $table->enum('type', AttendanceType::values());
-            $table->time('time');
+            $table->dateTime('time');
             $table->enum('work_mode', WorkMode::values())->default(WorkMode::ONSITE->value);
-            $table->string('selfie_path')->nullable();
             $table->enum('status', AttendanceStatus::values())->default(AttendanceStatus::PRESENT->value);
             $table->string('ticket_number')->unique()->nullable();
+            $table->string('screenshot_workstation_selfie_path')->nullable();
+            $table->string('screenshot_cgc_chat')->nullable();
+            $table->string('screenshot_department_chat')->nullable();
+            $table->string('screenshot_team_chat')->nullable();
+            $table->string('screenshot_group_chat')->nullable();
             $table->timestamps();
         });
     }

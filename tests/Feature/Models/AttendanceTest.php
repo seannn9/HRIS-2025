@@ -5,16 +5,16 @@ use App\Enums\AttendanceType;
 use App\Enums\ShiftType;
 use App\Enums\WorkMode;
 use App\Models\Attendance;
-use App\Models\User;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 
 describe('Attendance Model', function () {
     beforeEach(function () {
-        $this->attendance = Attendance::factory()->create(['type' => AttendanceType::TIME_OUT->value]);
+        $this->attendance = Attendance::factory()->create(['type' => AttendanceType::TIME_OUT]);
     });
 
-    it('belongs to a user', function () {
-        expect($this->attendance->user)->toBeInstanceOf(User::class);
+    it('belongs to an employee', function () {
+        expect($this->attendance->employee)->toBeInstanceOf(Employee::class);
     });
 
     it('has correct cast attributes', function () {
@@ -34,7 +34,7 @@ describe('Attendance Model', function () {
             'date' => '2023-01-01',
             'type' => AttendanceType::TIME_IN
         ]);
-        
+
         $request = new Request([
             'date_from' => '2023-01-01',
             'type' => AttendanceType::TIME_IN->value
@@ -46,20 +46,20 @@ describe('Attendance Model', function () {
     });
 
     it('applies grouped data scope correctly', function () {
-        $user = User::factory()->create();
-        Attendance::factory()->count(3)->create(['user_id' => $user->id]);
-        
-        $grouped = Attendance::groupedData('user')->get();
-        
+        $employee = Employee::factory()->create();
+        Attendance::factory()->count(3)->create(['employee_id' => $employee->id]);
+
+        $grouped = Attendance::groupedData('employee')->get();
+
         expect($grouped)->toHaveCount(2)
             ->and($grouped->last()->total_entries)->toBe(3);
     });
 
     it('has unique ticket number', function () {
         $ticket = 'TICKET-12345';
-        
+
         Attendance::factory()->create(['ticket_number' => $ticket]);
-        
+
         expect(fn() => Attendance::factory()->create(['ticket_number' => $ticket]))
             ->toThrow(\Illuminate\Database\QueryException::class);
     });
@@ -67,13 +67,13 @@ describe('Attendance Model', function () {
     it('prevents duplicate entries for same user/date/type', function () {
         $data = [
             'id' => random_int(1000, 9506),
-            'user_id' => $this->attendance->user()->get()->first()->id,
+            'employee_id' => $this->attendance->employee()->get()->first()->id,
             'date' => '2023-01-01',
             'type' => AttendanceType::TIME_IN
         ];
-        
+
         Attendance::factory()->create($data);
-        
+
         expect(fn() => Attendance::factory()->create($data))
             ->toThrow(\Illuminate\Database\QueryException::class);
     });

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\UserRole;
-use App\Enums\UserStatus;
+use App\Enums\EmployeeStatus;
 
 class User extends Authenticatable
 {
@@ -18,14 +18,10 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'department',
-        'position',
-        'status',
     ];
 
     protected $attributes = [
-        'role' => UserRole::EMPLOYEE->value,
-        'status' => UserStatus::ACTIVE->value,
+        'role' => UserRole::EMPLOYEE,
     ];
 
     protected $hidden = [
@@ -34,10 +30,7 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'role' => 'string',
-        'status' => 'string',
         'role' => UserRole::class,
-        'status' => UserStatus::class,
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
@@ -45,16 +38,6 @@ class User extends Authenticatable
     public function employee()
     {
         return $this->hasOne(Employee::class);
-    }
-
-    public function attendances()
-    {
-        return $this->hasMany(Attendance::class);
-    }
-
-    public function leaveRequests()
-    {
-        return $this->hasMany(LeaveRequest::class);
     }
 
     

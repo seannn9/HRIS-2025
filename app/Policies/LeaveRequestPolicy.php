@@ -22,7 +22,8 @@ class LeaveRequestPolicy
      */
     public function view(User $user, LeaveRequest $leave): bool
     {
-        return $user->isAdmin() || $user->isHr() || $leave->user_id === $user->id;
+        $employee = $user->employee()->get()->first();
+        return $user->isAdmin() || $user->isHr() || $leave->employee_id == $employee->id;
     }
 
     /**
@@ -38,8 +39,9 @@ class LeaveRequestPolicy
      */
     public function update(User $user, LeaveRequest $leave): bool
     {
+        $employee = $user->employee()->get()->first();
         return $user->isAdmin() || $user->isHr() || 
-            ($leave->user_id === $user->id && $leave->isPending());
+            ($leave->employee_id === $employee->id && $leave->isPending());
     }
 
     /**
@@ -47,7 +49,8 @@ class LeaveRequestPolicy
      */
     public function delete(User $user, LeaveRequest $leave): bool
     {
-        return $user->isAdmin() || ($leave->user_id === $user->id && $leave->isPending());
+        $employee = $user->employee()->get()->first();
+        return $user->isAdmin() || ($leave->employee_id == $employee->id && $leave->isPending());
     }
 
     public function updateStatus(User $user): bool

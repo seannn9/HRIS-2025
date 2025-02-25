@@ -2,7 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Enums\EmploymentStatus;
+use App\Enums\EmployeeStatus;
+use App\Enums\EmploymentType;
 use App\Enums\Gender;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -22,15 +23,17 @@ class EmployeeFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            // 'employee_id' => 'EMP' . Str::padLeft(fake()->unique()->randomNumber(5), 5, '0'),
-            'birthdate' => fake()->optional()->date(),
-            'gender' => fake()->optional()->randomElement(Gender::values()),
-            'contact_number' => fake()->optional()->phoneNumber(),
-            'address' => fake()->optional()->address(),
-            'emergency_contact_name' => fake()->optional()->name(),
-            'emergency_contact_number' => fake()->optional()->phoneNumber(),
+            'birthdate' => fake()->date(),
+            'gender' => fake()->randomElement(Gender::values()),
+            'contact_number' => fake()->phoneNumber(),
+            'address' => fake()->address(),
+            'emergency_contact_name' => fake()->name(),
+            'emergency_contact_number' => fake()->phoneNumber(),
             'hire_date' => fake()->date(),
-            'employment_status' => fake()->randomElement(EmploymentStatus::values()),
+            'employment_type' => fake()->randomElement(EmploymentType::values()),
+            'position' => fake()->optional()->jobTitle(),
+            'department' => fake()->optional()->word(),
+            'status' => fake()->randomElement(EmployeeStatus::values()),
         ];
     }
 }

@@ -25,25 +25,34 @@ class Attendance extends Model
     ];
 
     protected $attributes = [
-        'status' => AttendanceStatus::PRESENT->value,
-        'work_mode' => WorkMode::ONSITE->value,
+        'status' => AttendanceStatus::PRESENT,
+        'work_mode' => WorkMode::ONSITE,
+        'screenshot_workstation_selfie_path' => null,
+        'screenshot_cgc_chat' => null,
+        'screenshot_department_chat' => null,
+        'screenshot_team_chat' => null,
+        'screenshot_group_chat' => null,
     ];
 
     protected $fillable = [
-        'user_id',
+        'employee_id',
         'date',
         'shift_type',
         'type',
         'time',
         'work_mode',
-        'selfie_path',
+        'screenshot_workstation_selfie_path',
+        'screenshot_cgc_chat',
+        'screenshot_department_chat',
+        'screenshot_team_chat',
+        'screenshot_group_chat',
         'status',
         'ticket_number'
     ];
 
-    public function user()
+    public function employee()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Employee::class);
     }
 
     public function scopeFilter($query, array $filters)
@@ -52,8 +61,8 @@ class Attendance extends Model
                 $q->where('date', '>=', $filters['date_from']))
             ->when(isset($filters['date_to']), fn($q) => 
                 $q->where('date', '<=', $filters['date_to']))
-            ->when(isset($filters['user_id']), fn($q) => 
-                $q->where('user_id', $filters['user_id']))
+            ->when(isset($filters['employee_id']), fn($q) => 
+                $q->where('employee_id', $filters['employee_id']))
             ->when(isset($filters['shift_type']), fn($q) => 
                 $q->where('shift_type', $filters['shift_type']))
             ->when(isset($filters['type']), fn($q) => 
@@ -68,8 +77,8 @@ class Attendance extends Model
     {
         // TODO: Improve this shit
         return match ($groupBy) {
-            'user' => $query->select('user_id', DB::raw('COUNT(*) as total_entries'))
-                ->groupBy('user_id'),
+            'employee' => $query->select('employee_id', DB::raw('COUNT(*) as total_entries'))
+                ->groupBy('employee_id'),
             'date' => $query->select('date', DB::raw('COUNT(*) as total_entries'))
                 ->groupBy('date'),
             'shift_type' => $query->select('shift_type', DB::raw('COUNT(*) as total_entries'))

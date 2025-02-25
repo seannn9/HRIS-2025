@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Enums\AttendanceType;
 use App\Enums\LeaveStatus;
 use App\Enums\LeaveType;
-use App\Models\User;
+use App\Models\Employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +21,7 @@ class LeaveRequestFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'employee_id' => Employee::factory(),
             'leave_type' => $this->faker->randomElement(LeaveType::cases()),
             'start_date' => $this->faker->dateTimeBetween('-1 month', '+1 month'),
             'end_date' => $this->faker->dateTimeBetween('+2 days', '+1 month'),

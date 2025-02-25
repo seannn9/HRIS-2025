@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LeaveRequest;
 use App\Enums\{LeaveStatus, LeaveType};
+use App\Models\Employee;
 use Illuminate\Http\Request;
 
 class LeaveRequestController extends Controller
@@ -15,10 +16,10 @@ class LeaveRequestController extends Controller
             'status' => 'sometimes|in:' . implode(',', LeaveStatus::values()),
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date|after:start_date',
-            'user_id' => 'sometimes|exists:users,id'
+            'employee_id' => 'sometimes|exists:employees,id'
         ]);
 
-        $query = LeaveRequest::with('User')
+        $query = LeaveRequest::with('Employee')
             ->filter($validated)
             ->when($request->user()->isEmployee(), fn($q) => $q->where('user_id', $request->user()->id));
 
@@ -30,15 +31,16 @@ class LeaveRequestController extends Controller
         if ($request->user()->cannot('create', LeaveRequest::class)) abort(403);
 
         $validated = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
             'leave_type' => 'required|in:' . implode(',', LeaveType::values()),
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after_or_equal:start_date',
             'reason' => 'required|string|max:500',
             'shift_covered' => 'sometimes|array',
-            'shift_covered.*' => 'string|max:255'
+            'shift_covered.*' => 'string|max:255',
         ]);
 
-        $leave = $request->user()->leaveRequests()->create([
+        $leave = LeaveRequest::factory()->create([
             ...$validated,
             'status' => LeaveStatus::PENDING
         ]);

@@ -2,11 +2,12 @@
 
 namespace App\Enums;
 
-enum EmploymentStatus: string
+enum EmploymentType: string
 {
     case REGULAR = 'regular';
-    case PROBATIONARY = 'probationary';
-    case CONTRACTUAL = 'contractual';
+    case K12_WORK_IMMERSION = 'work_immersion';
+    case INTERNSHIP = 'internship';
+    case APPRENTICESHIP = 'apprenticeship';
 
     public static function values(): array
     {

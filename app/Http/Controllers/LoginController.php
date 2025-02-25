@@ -23,17 +23,14 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
  
+        $user = User::whereEmail($email)->first();
+
         $success = false;
-
-        try {
-            $user = User::whereEmail($email)->firstOrFail();
-            $employee = $user->employee()->firstOrFail();
-
-            if ($user && $employee->id === $employeeNumber) {
+        if ($user != null) {
+            $employee = $user->employee()->first();
+            
+            if ($employee != null && $employee->id === $employeeNumber) 
                 $success = Auth::attempt($credentials, $rememberSession);
-            }
-        } catch (\Throwable $th) {
-            // echo $th;
         }
 
         if ($success) {

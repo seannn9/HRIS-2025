@@ -3,8 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Attendance;
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Employee;
 use Illuminate\Database\Seeder;
 
 class AttendanceSeeder extends Seeder
@@ -14,10 +13,10 @@ class AttendanceSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all();
+        $employees = Employee::all();
 
-        foreach ($users as $user) {
-            Attendance::factory()->count(20)->create(['user_id' => $user->id]);
+        foreach ($employees as $employee) {
+            Attendance::factory()->count(20)->create(['employee_id' => $employee->id]);
         }
     }
 }
