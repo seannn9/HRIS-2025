@@ -27,7 +27,7 @@ class Attendance extends Model
     protected $attributes = [
         'status' => AttendanceStatus::PRESENT,
         'work_mode' => WorkMode::ONSITE,
-        'screenshot_workstation_selfie_path' => null,
+        'screenshot_workstation_selfie' => null,
         'screenshot_cgc_chat' => null,
         'screenshot_department_chat' => null,
         'screenshot_team_chat' => null,
@@ -41,7 +41,7 @@ class Attendance extends Model
         'type',
         'time',
         'work_mode',
-        'screenshot_workstation_selfie_path',
+        'screenshot_workstation_selfie',
         'screenshot_cgc_chat',
         'screenshot_department_chat',
         'screenshot_team_chat',

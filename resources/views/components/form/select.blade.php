@@ -14,12 +14,12 @@
             }}
             >
 
-            @if (!isset($selected))
+            @if (isset($selected) && $selected == null)
                 <option value="" selected disabled hidden>Choose an option</option>
             @endif
 
             @foreach($options as $value => $label)
-                <option value="{{ $value }}">{{ $label }}</option>
+                <option @if(isset($selected) && $selected == $value) selected @endif value="{{ $value }}">{{ $label }}</option>
             @endforeach
         </select>
         <svg aria-hidden="true"

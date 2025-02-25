@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Enums\AttendanceStatus;
 use App\Enums\AttendanceType;
+use App\Enums\Department;
+use App\Enums\DepartmentTeam;
+use App\Enums\EmploymentType;
 use App\Enums\ShiftType;
 use App\Enums\WorkMode;
 use App\Models\Employee;
@@ -34,22 +37,73 @@ class AttendanceController extends Controller
         return response()->json($query->paginate(15));
     }
 
+    public function create(Request $request)
+    {
+        
+        $currentShiftType = ShiftType::getCurrentShiftType();
+        $currentAttendanceType = AttendanceType::getCurrentAttendanceType();
+        $employee = $request->user()->employee()->get()->first();
+
+        return view('attendance.index', [
+            'employee' => $employee,
+            'departments' => Department::options(),
+            'departmentTeams' => DepartmentTeam::options(),
+            'employmentTypes' => EmploymentType::options(),
+            'workModes' => WorkMode::options(),
+            'attendanceTypes' => AttendanceType::options(),
+            'currentAttendanceType' => $currentAttendanceType == null ? null : $currentAttendanceType->value,
+            'shiftTypes' => ShiftType::options(),
+            'currentShiftType' => $currentShiftType == null ? null : $currentShiftType->value,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'date' => 'required|date',
             'shift_type' => 'required|in:' . implode(',', ShiftType::values()),
             'type' => 'required|in:' . implode(',', AttendanceType::values()),
-            'time' => 'required|date_format:H:i',
-            'work_mode' => 'sometimes|in:' . implode(',', WorkMode::values()),
-            'selfie_path' => 'sometimes|string|max:255',
-            'status' => 'sometimes|in:' . implode(',', AttendanceStatus::values()),
+            'work_mode' => 'required|in:' . implode(',', WorkMode::values()),
+            'screenshot_workstation_selfie' => 'required|image|mimes:jpg,png|max:1502',
+            'screenshot_cgc_chat' => 'required|image|mimes:jpg,png|max:1502',
+            'screenshot_department_chat' => 'required|image|mimes:jpg,png|max:1502',
+            'screenshot_team_chat' => 'required|image|mimes:jpg,png|max:1502',
+            'screenshot_group_chat' => 'required|image|mimes:jpg,png|max:1502',
         ]);
 
-        $attendance = Attendance::factory()->create($validated);
+        $paths = $this->uploadAndGetPaths($request);
+
+        $attendance = Attendance::factory()->create([
+            ...$validated,
+            ...$paths,
+            'time' => now()->format('H:i'),
+            'date' => now()->toDateString()
+        ]);
 
         return response()->json($attendance, 201);
+    }
+
+    private function uploadAndGetPaths(Request $request): array
+    {
+        $selfie = $request->file('screenshot_workstation_selfie');
+        $cgcChat = $request->file('screenshot_cgc_chat');
+        $deptChat = $request->file('screenshot_department_chat');
+        $teamChat = $request->file('screenshot_team_chat');
+        $groupChat = $request->file('screenshot_group_chat');
+
+        $selfiePath = $selfie->store('proofs');
+        $cgcChatPath = $cgcChat->store('proofs');
+        $deptChatPath = $deptChat->store('proofs');
+        $teamChatPath = $teamChat->store('proofs');
+        $groupChatPath = $groupChat->store('proofs');
+
+        return [
+            'screenshot_workstation_selfie' => $selfiePath,
+            'screenshot_cgc_chat' => $cgcChatPath,
+            'screenshot_department_chat' => $deptChatPath,
+            'screenshot_team_chat' => $teamChatPath,
+            'screenshot_group_chat' => $groupChatPath,
+        ];
     }
 
     public function show(Request $request, string $id)

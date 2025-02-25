@@ -1,8 +1,10 @@
 <?php
 
 use App\Enums\UserRole;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\LoginController;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest'])->group(function () {
@@ -17,8 +19,8 @@ Route::middleware(['guest'])->group(function () {
 
 
 Route::middleware(['auth', 'auth.session'])->group(function () {
-    Route::get("/", function () {
-        $role = Auth::user()->role;
+    Route::get("/", function (Request $request) {
+        $role = $request->user()->role;
 
         return match ($role) {
             UserRole::EMPLOYEE => view('employee.dashboard'),
@@ -28,9 +30,12 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         };
     })->name("dashboard");
 
-    Route::get("/attendance", function () {
-        return view('attendance.index');
-    })->name("attendance");
-
     Route::get("/logout", [LoginController::class, 'logout'])->name("logout");
+        
+    Route::resource('attendance', AttendanceController::class)
+        ->except(['edit']);
+
+    Route::resource('leave', LeaveRequestController::class);
+
+    Route::patch('/leave/{id}/status', [LeaveRequestController::class, 'updateStatus']);
 });
