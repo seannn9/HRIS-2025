@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AttendanceStatus;
 use App\Enums\Department;
 use App\Enums\EmployeeStatus;
 use App\Enums\EmploymentType;
@@ -25,6 +26,7 @@ return new class extends Migration {
             $table->enum('department', Department::values());
             $table->string('position')->nullable();
             $table->enum('status', EmployeeStatus::values())->default(EmployeeStatus::ACTIVE->value);
+            $table->enum('attendance_status', AttendanceStatus::values());
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\AttendanceStatus;
 use App\Enums\Department;
 use App\Enums\EmployeeStatus;
 use App\Enums\EmploymentType;
@@ -35,6 +36,7 @@ class EmployeeFactory extends Factory
             'position' => fake()->optional()->jobTitle(),
             'department' => fake()->randomElement(Department::values()),
             'status' => fake()->randomElement(EmployeeStatus::values()),
+            'attendance_status' => $this->faker->randomElement(AttendanceStatus::cases()),
         ];
     }
 }

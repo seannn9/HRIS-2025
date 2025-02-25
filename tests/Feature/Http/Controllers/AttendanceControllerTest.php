@@ -32,7 +32,6 @@ describe('Attendance Controller as Admin', function () {
             'date' => now()->format('Y-m-d'),
             'shift_type' => ShiftType::MORNING,
             'type' => AttendanceType::TIME_IN,
-            'time' => '09:00',
             'work_mode' => WorkMode::REMOTE,
         ]);
 
@@ -60,14 +59,14 @@ describe('Attendance Controller as Admin', function () {
 
     it('can update attendance record', function () {
         $attendance = Attendance::factory()->create();
-        $newTime = '10:00';
+        $newTime = now()->toDateString();
 
         $response = $this->patchJson("/api/attendance/{$attendance->id}", [
-            'time' => $newTime
+            'date' => $newTime
         ]);
 
         $response->assertOk();
-        expect($attendance->fresh()->time->format('H:i'))->toBe($newTime);
+        expect($attendance->fresh()->date->toDateString())->toBe($newTime);
     });
 
     it('can delete attendance record', function () {
@@ -83,14 +82,12 @@ describe('Attendance Controller as Admin', function () {
         Attendance::factory()->create([
             'employee_id' => $this->employee->id,
             'date' => '2023-01-01',
-            'type' => AttendanceType::TIME_IN,
-            'time' => '09:00'
+            'type' => AttendanceType::TIME_IN
         ]);
         Attendance::factory()->create([
             'employee_id' => $this->employee->id,
             'date' => '2023-01-01',
-            'type' => AttendanceType::TIME_OUT,
-            'time' => '17:00'
+            'type' => AttendanceType::TIME_OUT
         ]);
 
         $response = $this->getJson('/api/attendance?group_by=employee');
@@ -123,10 +120,10 @@ describe('Attendance Controller as Employee', function () {
 
     it('cannot update attendance record', function () {
         $attendance = Attendance::factory()->create(['employee_id' => $this->employee->id + 1]);
-        $newTime = '10:00';
+        $newTime = now()->toDateString();
 
         $response = $this->patchJson("/api/attendance/{$attendance->id}", [
-            'time' => $newTime
+            'date' => $newTime
         ]);
 
         $response->assertForbidden();

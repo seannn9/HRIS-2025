@@ -14,12 +14,10 @@ return new class extends Migration {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
-            $table->date('date');
+            $table->dateTime('date');
             $table->enum('shift_type', ShiftType::values());
             $table->enum('type', AttendanceType::values());
-            $table->dateTime('time');
             $table->enum('work_mode', WorkMode::values())->default(WorkMode::ONSITE->value);
-            $table->enum('status', AttendanceStatus::values())->default(AttendanceStatus::PRESENT->value);
             $table->string('ticket_number')->unique()->nullable();
             $table->string('screenshot_workstation_selfie')->nullable();
             $table->string('screenshot_cgc_chat')->nullable();

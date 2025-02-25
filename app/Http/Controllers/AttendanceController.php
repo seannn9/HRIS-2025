@@ -11,6 +11,7 @@ use App\Enums\EmploymentType;
 use App\Enums\ShiftType;
 use App\Enums\WorkMode;
 use App\Models\Employee;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
@@ -24,7 +25,6 @@ class AttendanceController extends Controller
             'employee_id' => 'sometimes|exists:employees,id',
             'shift_type' => 'sometimes|in:' . implode(',', ShiftType::values()),
             'type' => 'sometimes|in:' . implode(',', AttendanceType::values()),
-            'status' => 'sometimes|in:' . implode(',', AttendanceStatus::values()),
             'work_mode' => 'sometimes|in:' . implode(',', WorkMode::values()),
             'group_by' => 'sometimes|in:employee,date,shift_type',
         ]);
@@ -71,19 +71,22 @@ class AttendanceController extends Controller
             'screenshot_group_chat' => 'required|image|mimes:jpg,png|max:1502',
         ]);
 
-        $paths = $this->uploadAndGetPaths($request);
+        $dateToday = now();
+        $finalForm = [
+            ...$validated, 
+            'date' => $dateToday->toDateString()
+        ];
+        $paths = $this->uploadAndGetPaths($request, $dateToday);
 
-        $attendance = Attendance::factory()->create([
-            ...$validated,
-            ...$paths,
-            'time' => now()->format('H:i'),
-            'date' => now()->toDateString()
-        ]);
+        $attendance = Attendance::factory()->create([...$finalForm, ...$paths]);
 
-        return response()->json($attendance, 201);
+        return redirect()
+            ->route('employee.updateAttendanceStatus', ['attendance_status' => AttendanceStatus::PRESENT->value]);
+
+        // return response()->json($attendance, 201);
     }
 
-    private function uploadAndGetPaths(Request $request): array
+    private function uploadAndGetPaths(Request $request, Carbon $dateToday): array
     {
         $selfie = $request->file('screenshot_workstation_selfie');
         $cgcChat = $request->file('screenshot_cgc_chat');
@@ -91,11 +94,17 @@ class AttendanceController extends Controller
         $teamChat = $request->file('screenshot_team_chat');
         $groupChat = $request->file('screenshot_group_chat');
 
-        $selfiePath = $selfie->store('proofs');
-        $cgcChatPath = $cgcChat->store('proofs');
-        $deptChatPath = $deptChat->store('proofs');
-        $teamChatPath = $teamChat->store('proofs');
-        $groupChatPath = $groupChat->store('proofs');
+        $employee = $request->user()->employee()->get()->first();
+
+        $attendanceType = $request->input('type');
+        $shiftType = $request->input('shift_type');
+        $attendanceFolderPath = "attendance-proofs/{$employee->id}/{$dateToday->format('Y-m-d')}/$shiftType-$attendanceType";
+
+        $selfiePath = $selfie->storeAs($attendanceFolderPath, 'selfie.'.$selfie->extension(), ['disk' => 'public']);
+        $cgcChatPath = $cgcChat->storeAs($attendanceFolderPath, 'cgc.'.$selfie->extension(), ['disk' => 'public']);
+        $deptChatPath = $deptChat->storeAs($attendanceFolderPath, 'dept.'.$selfie->extension(), ['disk' => 'public']);
+        $teamChatPath = $teamChat->storeAs($attendanceFolderPath, 'team.'.$selfie->extension(), ['disk' => 'public']);
+        $groupChatPath = $groupChat->storeAs($attendanceFolderPath, 'group.'.$selfie->extension(), ['disk' => 'public']);
 
         return [
             'screenshot_workstation_selfie' => $selfiePath,
@@ -125,10 +134,8 @@ class AttendanceController extends Controller
             'date' => 'sometimes|date',
             'shift_type' => 'sometimes|in:' . implode(',', ShiftType::values()),
             'type' => 'sometimes|in:' . implode(',', AttendanceType::values()),
-            'time' => 'sometimes|date_format:H:i',
             'work_mode' => 'sometimes|in:' . implode(',', WorkMode::values()),
             'selfie_path' => 'sometimes|string|max:255',
-            'status' => 'sometimes|in:' . implode(',', AttendanceStatus::values()),
         ]);
 
         $attendance->update($validated);

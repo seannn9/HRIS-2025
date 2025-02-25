@@ -16,16 +16,13 @@ class Attendance extends Model
     use HasFactory;
 
     protected $casts = [
-        'date' => 'date',
         'shift_type' => ShiftType::class,
         'type' => AttendanceType::class,
         'work_mode' => WorkMode::class,
-        'status' => AttendanceStatus::class,
-        'time' => 'datetime',
+        'date' => 'datetime',
     ];
 
     protected $attributes = [
-        'status' => AttendanceStatus::PRESENT,
         'work_mode' => WorkMode::ONSITE,
         'screenshot_workstation_selfie' => null,
         'screenshot_cgc_chat' => null,
@@ -39,14 +36,12 @@ class Attendance extends Model
         'date',
         'shift_type',
         'type',
-        'time',
         'work_mode',
         'screenshot_workstation_selfie',
         'screenshot_cgc_chat',
         'screenshot_department_chat',
         'screenshot_team_chat',
         'screenshot_group_chat',
-        'status',
         'ticket_number'
     ];
 
@@ -67,8 +62,6 @@ class Attendance extends Model
                 $q->where('shift_type', $filters['shift_type']))
             ->when(isset($filters['type']), fn($q) => 
                 $q->where('type', $filters['type']))
-            ->when(isset($filters['status']), fn($q) => 
-                $q->where('status', $filters['status']))
             ->when(isset($filters['work_mode']), fn($q) => 
                 $q->where('work_mode', $filters['work_mode']));
     }

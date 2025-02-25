@@ -24,8 +24,6 @@ describe('Attendance Model', function () {
                 'shift_type' => ShiftType::class,
                 'type' => AttendanceType::class,
                 'work_mode' => WorkMode::class,
-                'status' => AttendanceStatus::class,
-                'time' => 'datetime',
             ]);
     });
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AttendanceStatus;
 use App\Enums\Department;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +28,7 @@ class Employee extends Model
         'department',
         'position',
         'status',
+        'attendance_status',
     ];
 
     protected $casts = [
@@ -34,6 +36,7 @@ class Employee extends Model
         'gender' => Gender::class,
         'employment_type' => EmploymentType::class,
         'status' => EmployeeStatus::class,
+        'attendance_status' => AttendanceStatus::class,
     ];
 
     protected $attributes = [

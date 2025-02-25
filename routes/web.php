@@ -2,6 +2,7 @@
 
 use App\Enums\UserRole;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Http\Request;
@@ -34,6 +35,9 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         
     Route::resource('attendance', AttendanceController::class)
         ->except(['edit']);
+        
+    Route::get('/employee/update-attendance', [EmployeeController::class, 'updateAttendanceStatus'])
+        ->name("employee.updateAttendanceStatus");
 
     Route::resource('leave', LeaveRequestController::class);
 
