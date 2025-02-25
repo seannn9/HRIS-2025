@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Department;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\Gender;
@@ -29,13 +30,14 @@ class Employee extends Model
     ];
 
     protected $casts = [
+        'department' => Department::class,
         'gender' => Gender::class,
         'employment_type' => EmploymentType::class,
         'status' => EmployeeStatus::class,
     ];
 
     protected $attributes = [
-        'status' => EmployeeStatus::ACTIVE,
+        'status' => EmployeeStatus::INACTIVE,
     ];
 
     public function user()

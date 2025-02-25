@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Department;
 use App\Enums\EmployeeStatus;
 use App\Enums\EmploymentType;
 use App\Enums\Gender;
@@ -21,7 +22,7 @@ return new class extends Migration {
             $table->string('emergency_contact_number', 20);
             $table->date('hire_date');
             $table->enum('employment_type', EmploymentType::values());
-            $table->string('department')->nullable();
+            $table->enum('department', Department::values());
             $table->string('position')->nullable();
             $table->enum('status', EmployeeStatus::values())->default(EmployeeStatus::ACTIVE->value);
             $table->timestamps();

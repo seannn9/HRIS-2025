@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Department;
 use App\Enums\EmployeeStatus;
 use App\Enums\EmploymentType;
 use App\Enums\Gender;
@@ -32,7 +33,7 @@ class EmployeeFactory extends Factory
             'hire_date' => fake()->date(),
             'employment_type' => fake()->randomElement(EmploymentType::values()),
             'position' => fake()->optional()->jobTitle(),
-            'department' => fake()->optional()->word(),
+            'department' => fake()->randomElement(Department::values()),
             'status' => fake()->randomElement(EmployeeStatus::values()),
         ];
     }
