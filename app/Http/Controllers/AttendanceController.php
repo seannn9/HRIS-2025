@@ -10,13 +10,27 @@ use App\Enums\DepartmentTeam;
 use App\Enums\EmploymentType;
 use App\Enums\ShiftType;
 use App\Enums\WorkMode;
+use App\Http\Requests\StoreAttendanceRequest;
 use App\Models\Employee;
+use App\Services\AttendancePhotoService;
+use App\Services\EmployeeAttendanceStatusService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
+    protected AttendancePhotoService $photoService;
+    protected EmployeeAttendanceStatusService $employeeService;
+
+    public function __construct(
+        AttendancePhotoService $photoService,
+        EmployeeAttendanceStatusService $employeeService
+    ) {
+        $this->photoService = $photoService;
+        $this->employeeService = $employeeService;
+    }
+    
     public function index(Request $request)
     {
         $validated = $request->validate([
@@ -57,62 +71,35 @@ class AttendanceController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreAttendanceRequest $request)
     {
-        $validated = $request->validate([
-            'employee_id' => 'required|exists:employees,id',
-            'shift_type' => 'required|in:' . implode(',', ShiftType::values()),
-            'type' => 'required|in:' . implode(',', AttendanceType::values()),
-            'work_mode' => 'required|in:' . implode(',', WorkMode::values()),
-            'screenshot_workstation_selfie' => 'required|image|mimes:jpg,png|max:1502',
-            'screenshot_cgc_chat' => 'required|image|mimes:jpg,png|max:1502',
-            'screenshot_department_chat' => 'required|image|mimes:jpg,png|max:1502',
-            'screenshot_team_chat' => 'required|image|mimes:jpg,png|max:1502',
-            'screenshot_group_chat' => 'required|image|mimes:jpg,png|max:1502',
+        $validated = $request->validated();
+        $dateToday = now();
+        $employee = $request->user()->employee()->get()->first();
+        
+        $paths = $this->photoService->uploadProofs(
+            $request->allFiles(),
+            $employee,
+            $dateToday,
+            $validated['type'],
+            $validated['shift_type'],
+        );
+
+        $attendance = Attendance::create([
+            ...$validated,
+            ...$paths,
+            'date' => $dateToday->toDateString()
         ]);
 
-        $dateToday = now();
-        $finalForm = [
-            ...$validated, 
-            'date' => $dateToday->toDateString()
-        ];
-        $paths = $this->uploadAndGetPaths($request, $dateToday);
+        $status = AttendanceStatus::PRESENT;
+        $statusUpdated = $this->employeeService->updateAttendanceStatus($employee, $status);
 
-        $attendance = Attendance::factory()->create([...$finalForm, ...$paths]);
+        if (!$statusUpdated) {
+            // Log the failure but continue (don't fail the whole request)
+            // You might want to add this to the response
+        }
 
-        return redirect()
-            ->route('employee.updateAttendanceStatus', ['attendance_status' => AttendanceStatus::PRESENT->value]);
-
-        // return response()->json($attendance, 201);
-    }
-
-    private function uploadAndGetPaths(Request $request, Carbon $dateToday): array
-    {
-        $selfie = $request->file('screenshot_workstation_selfie');
-        $cgcChat = $request->file('screenshot_cgc_chat');
-        $deptChat = $request->file('screenshot_department_chat');
-        $teamChat = $request->file('screenshot_team_chat');
-        $groupChat = $request->file('screenshot_group_chat');
-
-        $employee = $request->user()->employee()->get()->first();
-
-        $attendanceType = $request->input('type');
-        $shiftType = $request->input('shift_type');
-        $attendanceFolderPath = "attendance-proofs/{$employee->id}/{$dateToday->format('Y-m-d')}/$shiftType-$attendanceType";
-
-        $selfiePath = $selfie->storeAs($attendanceFolderPath, 'selfie.'.$selfie->extension(), ['disk' => 'public']);
-        $cgcChatPath = $cgcChat->storeAs($attendanceFolderPath, 'cgc.'.$selfie->extension(), ['disk' => 'public']);
-        $deptChatPath = $deptChat->storeAs($attendanceFolderPath, 'dept.'.$selfie->extension(), ['disk' => 'public']);
-        $teamChatPath = $teamChat->storeAs($attendanceFolderPath, 'team.'.$selfie->extension(), ['disk' => 'public']);
-        $groupChatPath = $groupChat->storeAs($attendanceFolderPath, 'group.'.$selfie->extension(), ['disk' => 'public']);
-
-        return [
-            'screenshot_workstation_selfie' => $selfiePath,
-            'screenshot_cgc_chat' => $cgcChatPath,
-            'screenshot_department_chat' => $deptChatPath,
-            'screenshot_team_chat' => $teamChatPath,
-            'screenshot_group_chat' => $groupChatPath,
-        ];
+        return response()->json($attendance, 201);
     }
 
     public function show(Request $request, string $id)

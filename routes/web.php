@@ -35,9 +35,6 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         
     Route::resource('attendance', AttendanceController::class)
         ->except(['edit']);
-        
-    Route::get('/employee/update-attendance', [EmployeeController::class, 'updateAttendanceStatus'])
-        ->name("employee.updateAttendanceStatus");
 
     Route::resource('leave', LeaveRequestController::class);
 

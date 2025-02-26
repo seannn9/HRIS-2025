@@ -62,23 +62,4 @@ class EmployeeController extends Controller
     {
         //
     }
-
-    /**
-     * Update attendance status
-     */
-    public function updateAttendanceStatus(Request $request)
-    {
-        $validated = $request->validate([
-            'attendance_status' => 'required|in:' . implode(',', AttendanceStatus::values()),
-        ]);
-
-        $employee = $request->user()->employee();
-
-        if ($employee->update($validated)) {
-            return redirect()->route("attendance.index")->with('success', "Attendance was successfully created!");
-        }
-
-        return back()
-            ->withErrors(['employee_id' => 'Failed to update attendance status of employee.']);
-    }
 }
