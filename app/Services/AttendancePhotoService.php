@@ -2,9 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Employee;
-use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 
 class AttendancePhotoService
@@ -13,20 +10,20 @@ class AttendancePhotoService
      * Upload attendance proof photos
      *
      * @param array $files Array of UploadedFile objects
-     * @param Employee $employee
+     * @param int $employeeId
      * @param string $attendanceType
      * @param string $shiftType
-     * @param Carbon|null $date
+     * 
      * @return array Paths to the stored files
      */
     public function uploadProofs(
         array $files,
-        Employee $employee,
-        Carbon $dateToday,
+        int $employeeId,
         string $attendanceType,
         string $shiftType
     ): array {
-        $attendanceFolderPath = "attendance-proofs/{$employee->id}/{$dateToday->format('Y-m-d')}/$shiftType-$attendanceType";
+        $today = now()->format('Y-m-d');
+        $attendanceFolderPath = "attendance-proofs/$employeeId/$today/$shiftType-$attendanceType";
         
         $fileTypes = [
             'screenshot_workstation_selfie' => 'selfie',

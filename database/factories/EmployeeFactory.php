@@ -8,7 +8,6 @@ use App\Enums\EmployeeStatus;
 use App\Enums\EmploymentType;
 use App\Enums\Gender;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\User;
 
 /**
@@ -26,6 +25,8 @@ class EmployeeFactory extends Factory
         return [
             'user_id' => User::factory(),
             'birthdate' => fake()->date(),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
             'gender' => fake()->randomElement(Gender::values()),
             'contact_number' => fake()->phoneNumber(),
             'address' => fake()->address(),

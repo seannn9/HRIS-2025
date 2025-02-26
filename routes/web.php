@@ -36,6 +36,13 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::resource('attendance', AttendanceController::class)
         ->except(['edit']);
 
+    Route::get('/attendance/create/success', function () {
+        return view('attendance.create-success');
+    })->name('attendance.create.success')
+        ->middleware('attendance.success');
+
+    Route::get('/attendance/export', function () {})->name('attendance.export');
+
     Route::resource('leave', LeaveRequestController::class);
 
     Route::patch('/leave/{id}/status', [LeaveRequestController::class, 'updateStatus']);

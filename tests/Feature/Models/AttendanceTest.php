@@ -20,7 +20,6 @@ describe('Attendance Model', function () {
     it('has correct cast attributes', function () {
         expect($this->attendance->getCasts())
             ->toMatchArray([
-                'date' => 'date',
                 'shift_type' => ShiftType::class,
                 'type' => AttendanceType::class,
                 'work_mode' => WorkMode::class,
@@ -29,7 +28,6 @@ describe('Attendance Model', function () {
 
     it('applies filter scope correctly', function () {
         $attendance = Attendance::factory()->create([
-            'date' => '2023-01-01',
             'type' => AttendanceType::TIME_IN
         ]);
 
@@ -66,7 +64,6 @@ describe('Attendance Model', function () {
         $data = [
             'id' => random_int(1000, 9506),
             'employee_id' => $this->attendance->employee()->get()->first()->id,
-            'date' => '2023-01-01',
             'type' => AttendanceType::TIME_IN
         ];
 

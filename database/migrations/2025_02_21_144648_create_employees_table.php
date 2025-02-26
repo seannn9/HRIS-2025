@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
             $table->date('birthdate');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->enum('gender', Gender::values());
             $table->string('contact_number', 20);
             $table->text('address');

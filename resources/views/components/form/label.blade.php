@@ -1,7 +1,9 @@
 @props(['label','name'])
 
 <label
-    class="block text-sm/6 font-medium text-gray-900"
-    for="{{ $name }}">
+    for="{{ $name }}"
+    {{ $attributes->merge([
+        'class' => "block text-sm/6 font-medium text-gray-900"
+    ]) }}>
     {{ $label }}
 </label>

@@ -24,7 +24,6 @@ class AttendanceFactory extends Factory
     {
         return [
             'employee_id' => Employee::factory(),
-            'date' => $this->faker->dateTimeBetween('-1 year'),
             'shift_type' => $this->faker->randomElement(ShiftType::cases()),
             'type' => $this->faker->randomElement(AttendanceType::cases()),
             'work_mode' => $this->faker->randomElement(WorkMode::cases()),

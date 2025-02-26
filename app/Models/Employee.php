@@ -17,6 +17,8 @@ class Employee extends Model
 
     protected $fillable = [
         'user_id',
+        'first_name',
+        'last_name',
         'birthdate',
         'gender',
         'contact_number',
@@ -56,5 +58,10 @@ class Employee extends Model
     public function leaveRequests()
     {
         return $this->hasMany(LeaveRequest::class);
+    }
+
+    public function getFullName()
+    {
+        return $this->first_name." ".$this->last_name;
     }
 }

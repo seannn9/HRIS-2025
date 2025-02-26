@@ -11,11 +11,8 @@ use App\Enums\EmploymentType;
 use App\Enums\ShiftType;
 use App\Enums\WorkMode;
 use App\Http\Requests\StoreAttendanceRequest;
-use App\Models\Employee;
 use App\Services\AttendancePhotoService;
 use App\Services\EmployeeAttendanceStatusService;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
@@ -44,21 +41,23 @@ class AttendanceController extends Controller
         ]);
 
         $query = Attendance::with('Employee')
-            ->when($request->user()->isEmployee(), fn($q) => $q->where('user_id', $request->user()->id))
+            ->when($request->user()->isEmployee(), fn($q) => $q->where('employee_id', $request->user()->id))
             ->filter($validated)
-            ->groupedData($validated['group_by'] ?? null);
+            ->groupedData($validated['group_by'] ?? null)
+            ->latest();
 
-        return response()->json($query->paginate(15));
+        $attendances = $query->paginate(15);
+
+        return response(view('attendance.dashboard', compact("attendances")));
     }
 
     public function create(Request $request)
     {
-        
         $currentShiftType = ShiftType::getCurrentShiftType();
         $currentAttendanceType = AttendanceType::getCurrentAttendanceType();
         $employee = $request->user()->employee()->get()->first();
 
-        return view('attendance.index', [
+        return view('attendance.create', [
             'employee' => $employee,
             'departments' => Department::options(),
             'departmentTeams' => DepartmentTeam::options(),
@@ -74,32 +73,43 @@ class AttendanceController extends Controller
     public function store(StoreAttendanceRequest $request)
     {
         $validated = $request->validated();
-        $dateToday = now();
+
         $employee = $request->user()->employee()->get()->first();
+        $attendanceType = $validated['type'];
+        $shiftType = $validated['shift_type'];
         
         $paths = $this->photoService->uploadProofs(
             $request->allFiles(),
-            $employee,
-            $dateToday,
-            $validated['type'],
-            $validated['shift_type'],
+            $employee->id,
+            $attendanceType,
+            $shiftType,
         );
 
         $attendance = Attendance::create([
             ...$validated,
-            ...$paths,
-            'date' => $dateToday->toDateString()
+            ...$paths
         ]);
 
         $status = AttendanceStatus::PRESENT;
         $statusUpdated = $this->employeeService->updateAttendanceStatus($employee, $status);
 
         if (!$statusUpdated) {
+            // TODO
             // Log the failure but continue (don't fail the whole request)
-            // You might want to add this to the response
+            // Add this to the response if possible
         }
 
-        return response()->json($attendance, 201);
+        $successMessage = "Checked Out and Hungry - Grab a Bite, Won't You?";
+        if ($attendanceType == AttendanceType::TIME_IN->value) {
+            $successMessage = "Checked In and Ready to Shine - Welcome Aboard!";
+        } else if ($shiftType == ShiftType::AFTERNOON->value) {
+            $successMessage = "Checked Out and Tired - Rest Up for Tomorrow!";
+        }
+
+        return redirect()
+            ->route('attendance.create.success')
+            ->with('success', $successMessage)
+            ->with('attendance', $attendance);
     }
 
     public function show(Request $request, string $id)
@@ -118,7 +128,6 @@ class AttendanceController extends Controller
         if ($request->user()->cannot('update', $attendance)) abort(403);
 
         $validated = $request->validate([
-            'date' => 'sometimes|date',
             'shift_type' => 'sometimes|in:' . implode(',', ShiftType::values()),
             'type' => 'sometimes|in:' . implode(',', AttendanceType::values()),
             'work_mode' => 'sometimes|in:' . implode(',', WorkMode::values()),

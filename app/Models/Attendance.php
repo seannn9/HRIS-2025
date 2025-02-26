@@ -19,7 +19,6 @@ class Attendance extends Model
         'shift_type' => ShiftType::class,
         'type' => AttendanceType::class,
         'work_mode' => WorkMode::class,
-        'date' => 'datetime',
     ];
 
     protected $attributes = [
@@ -33,7 +32,6 @@ class Attendance extends Model
 
     protected $fillable = [
         'employee_id',
-        'date',
         'shift_type',
         'type',
         'work_mode',
@@ -53,9 +51,9 @@ class Attendance extends Model
     public function scopeFilter($query, array $filters)
     {
         return $query->when(isset($filters['date_from']), fn($q) => 
-                $q->where('date', '>=', $filters['date_from']))
+                $q->where('created_at', '>=', $filters['date_from']))
             ->when(isset($filters['date_to']), fn($q) => 
-                $q->where('date', '<=', $filters['date_to']))
+                $q->where('created_at', '<=', $filters['date_to']))
             ->when(isset($filters['employee_id']), fn($q) => 
                 $q->where('employee_id', $filters['employee_id']))
             ->when(isset($filters['shift_type']), fn($q) => 
@@ -72,8 +70,8 @@ class Attendance extends Model
         return match ($groupBy) {
             'employee' => $query->select('employee_id', DB::raw('COUNT(*) as total_entries'))
                 ->groupBy('employee_id'),
-            'date' => $query->select('date', DB::raw('COUNT(*) as total_entries'))
-                ->groupBy('date'),
+            'date' => $query->select('created_at', DB::raw('COUNT(*) as total_entries'))
+                ->groupBy('created_at'),
             'shift_type' => $query->select('shift_type', DB::raw('COUNT(*) as total_entries'))
                 ->groupBy('shift_type'),
             default => $query,

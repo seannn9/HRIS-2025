@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use Illuminate\Support\Carbon;
+
 enum ShiftType: string
 {
     case MORNING = 'morning';
@@ -33,16 +35,16 @@ enum ShiftType: string
 
     
     public static function getCurrentShiftType(): ?ShiftType {
-        $MORNING_START = '74500';
-        $MORNING_END = '123000';
-        $NOON_START = '124500';
-        $NOON_END = '173000';
+        $MORNING_START = Carbon::createFromTime(7, 45);
+        $MORNING_END = Carbon::createFromTime(12, 30);
+        $NOON_START = Carbon::createFromTime(12, 45);
+        $NOON_END = Carbon::createFromTime(17, 30);
 
-        $now = date("His");
+        $now = Carbon::now();
 
-        if($now >= $NOON_START && $now <= $NOON_END){
+        if($now->between($NOON_START, $NOON_END)){
             return ShiftType::AFTERNOON;
-        } else if ($now >= $MORNING_START && $now <= $MORNING_END) {
+        } else if ($now->between($MORNING_START, $MORNING_END)) {
             return ShiftType::MORNING;
         }
 

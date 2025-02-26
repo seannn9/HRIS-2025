@@ -16,8 +16,8 @@ describe('Attendance Controller as Admin', function () {
     });
 
     it('can filter attendances by date and type', function () {
-        Attendance::factory()->create(['employee_id' => $this->employee->id, 'date' => '2023-01-01', 'type' => AttendanceType::TIME_IN]);
-        Attendance::factory()->create(['employee_id' => $this->employee->id, 'date' => '2023-01-02', 'type' => AttendanceType::TIME_OUT]);
+        Attendance::factory()->create(['employee_id' => $this->employee->id, 'type' => AttendanceType::TIME_IN]);
+        Attendance::factory()->create(['employee_id' => $this->employee->id, 'type' => AttendanceType::TIME_OUT]);
 
         $response = $this->getJson('/api/attendance?date_from=2023-01-01&date_to=2023-01-01&type=time_in');
         
@@ -29,7 +29,6 @@ describe('Attendance Controller as Admin', function () {
     it('can create new attendance record', function () {
         $response = $this->postJson('/api/attendance', [
             'employee_id' => $this->employee->id,
-            'date' => now()->format('Y-m-d'),
             'shift_type' => ShiftType::MORNING,
             'type' => AttendanceType::TIME_IN,
             'work_mode' => WorkMode::REMOTE,
@@ -58,15 +57,14 @@ describe('Attendance Controller as Admin', function () {
     });
 
     it('can update attendance record', function () {
-        $attendance = Attendance::factory()->create();
-        $newTime = now()->toDateString();
+        $attendance = Attendance::factory()->create(['type' => AttendanceType::TIME_IN->value]);
 
         $response = $this->patchJson("/api/attendance/{$attendance->id}", [
-            'date' => $newTime
+            'type' => AttendanceType::TIME_OUT->value
         ]);
 
         $response->assertOk();
-        expect($attendance->fresh()->date->toDateString())->toBe($newTime);
+        expect($attendance->fresh()->type)->toBe(AttendanceType::TIME_OUT->value);
     });
 
     it('can delete attendance record', function () {
@@ -81,12 +79,10 @@ describe('Attendance Controller as Admin', function () {
     it('can group data by user', function () {
         Attendance::factory()->create([
             'employee_id' => $this->employee->id,
-            'date' => '2023-01-01',
             'type' => AttendanceType::TIME_IN
         ]);
         Attendance::factory()->create([
             'employee_id' => $this->employee->id,
-            'date' => '2023-01-01',
             'type' => AttendanceType::TIME_OUT
         ]);
 
@@ -119,11 +115,10 @@ describe('Attendance Controller as Employee', function () {
     });
 
     it('cannot update attendance record', function () {
-        $attendance = Attendance::factory()->create(['employee_id' => $this->employee->id + 1]);
-        $newTime = now()->toDateString();
+        $attendance = Attendance::factory()->create(['type' => AttendanceType::TIME_IN->value]);
 
         $response = $this->patchJson("/api/attendance/{$attendance->id}", [
-            'date' => $newTime
+            'type' => AttendanceType::TIME_OUT->value
         ]);
 
         $response->assertForbidden();

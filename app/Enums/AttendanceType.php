@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use Illuminate\Support\Carbon;
+
 enum AttendanceType: string
 {
     case TIME_IN = 'time_in';
@@ -32,22 +34,22 @@ enum AttendanceType: string
     }
 
     public static function getCurrentAttendanceType(): ?AttendanceType {
-        $MORNING_IN_START = '74500';
-        $MORNING_IN_END = '83000';
-        $MORNING_OUT_START = '120000';
-        $MORNING_OUT_END = '123000';
+        $MORNING_IN_START = Carbon::createFromTime(7, 45);
+        $MORNING_IN_END = Carbon::createFromTime(8, 30);
+        $MORNING_OUT_START = Carbon::createFromTime(12, 0);
+        $MORNING_OUT_END = Carbon::createFromTime(12, 30);
 
-        $NOON_IN_START = '124500';
-        $NOON_IN_END = '130000';
-        $NOON_OUT_START = '164500';
-        $NOON_OUT_END = '173000';
+        $NOON_IN_START = Carbon::createFromTime(12, 45);
+        $NOON_IN_END = Carbon::createFromTime(13, 0);
+        $NOON_OUT_START = Carbon::createFromTime(16, 45);
+        $NOON_OUT_END = Carbon::createFromTime(17, 30);
 
-        $now = date("His");
+        $now = Carbon::now();
 
-        $shouldTimeIn = ($now >= $MORNING_IN_START && $now <= $MORNING_IN_END)
-            || ($now >= $NOON_IN_START && $now <= $NOON_IN_END);
-        $shouldTimeOut = ($now >= $MORNING_OUT_START && $now <= $MORNING_OUT_END)
-            || ($now >= $NOON_OUT_START && $now <= $NOON_OUT_END);
+        $shouldTimeIn = $now->between($MORNING_IN_START, $MORNING_IN_END)
+            || $now->between($NOON_IN_START, $NOON_IN_END);
+        $shouldTimeOut = $now->between($MORNING_OUT_START, $MORNING_OUT_END)
+            || $now->between($NOON_OUT_START, $NOON_OUT_END);
 
         if($shouldTimeIn){
             return AttendanceType::TIME_IN;
