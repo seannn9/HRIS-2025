@@ -118,7 +118,7 @@ class AttendanceController extends Controller
 
         if ($request->user()->cannot('view', $attendance)) abort(403);
 
-        return response()->json($attendance->load('employee'));
+        return view('attendance.show', compact('attendance'));
     }
 
     public function update(Request $request, string $id)

@@ -2,7 +2,6 @@
 
 use App\Enums\UserRole;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Http\Request;
