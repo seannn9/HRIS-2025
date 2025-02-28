@@ -160,7 +160,7 @@ class AttendanceController extends Controller
         if ($request->user()->cannot('delete', $attendance)) abort(403);
 
         $attendance->delete();
-        return response()->noContent();
+        return redirect()->route('attendance.index');
     }
 
     public function export(Request $request)
