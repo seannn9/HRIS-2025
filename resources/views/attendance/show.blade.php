@@ -71,7 +71,7 @@
     <!-- Conditional Update & Delete Buttons -->
     @if(auth()->user()->isAdmin() || auth()->user()->isHr())
     <div class="mt-6 flex gap-4">
-        <x-button text="Update" />
+        <x-button text="Update" onclick="window.location.href = '{{ route('attendance.edit', $attendance->id) }}'" />
         <form action="" method="POST" onsubmit="return confirm('Are you sure you want to delete this attendance?');">
             @csrf
             @method('DELETE')

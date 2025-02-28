@@ -14,13 +14,17 @@
             }}
             >
 
-            @if (isset($selected) && $selected == null)
-                <option value="" selected disabled hidden>Choose an option</option>
-            @endif
+            @if (isset($options))
+                @if (isset($selected) && $selected == null)
+                    <option value="" selected disabled hidden>Choose an option</option>
+                @endif
 
-            @foreach($options as $value => $label)
-                <option @if(isset($selected) && $selected == $value) selected @endif value="{{ $value }}">{{ $label }}</option>
-            @endforeach
+                @foreach($options as $value => $label)
+                    <option @if(isset($selected) && $selected == $value) selected @endif value="{{ $value }}">{{ $label }}</option>
+                @endforeach
+            @else
+                {{ $slot }}
+            @endif
         </select>
         <svg aria-hidden="true"
             class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"

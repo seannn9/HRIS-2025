@@ -32,8 +32,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     Route::get("/logout", [LoginController::class, 'logout'])->name("logout");
         
-    Route::resource('attendance', AttendanceController::class)
-        ->except(['edit']);
+    Route::resource('attendance', AttendanceController::class);
 
     Route::get('/attendance/create/success', function () {
         return view('attendance.create-success');

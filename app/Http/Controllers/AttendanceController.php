@@ -121,6 +121,18 @@ class AttendanceController extends Controller
         return view('attendance.show', compact('attendance'));
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Request $request, string $id)
+    {
+        $attendance = Attendance::where('id', '=', $id)->first() ?? abort(404);
+
+        if ($request->user()->cannot('update', $attendance)) abort(403);
+
+        return view("attendance.edit", compact('attendance'));
+    }
+
     public function update(Request $request, string $id)
     {
         $attendance = Attendance::where('id', '=', $id)->first() ?? abort(404);
