@@ -1,4 +1,4 @@
-[![Test Workflow Status](https://img.shields.io/github/actions/workflow/status/aranes-rc/HRIS-2025/laravel-test.yml?style=for-the-badge&link=https%3A%2F%2Fgithub.com%2Faranes-rc%2FHRIS-2025%2Factions%2Fworkflows%2Flaravel-test.yml)](https://github.com/aranes-rc/HRIS-2025/actions/workflows/laravel-test.yml)
+[![Test Workflow Status](https://img.shields.io/github/actions/workflow/status/aranes-rc/HRIS-2025/laravel-test.yml?style=for-the-badge&label=Test&link=https%3A%2F%2Fgithub.com%2Faranes-rc%2FHRIS-2025%2Factions%2Fworkflows%2Flaravel-test.yml)](https://github.com/aranes-rc/HRIS-2025/actions/workflows/laravel-test.yml)
 
 _(temporary repository only. will be transferred to the organization soon)_
 
