@@ -91,19 +91,20 @@ class AttendanceController extends Controller
         ]);
 
         $status = AttendanceStatus::PRESENT;
+        $successMessage = "Checked Out and Hungry - Grab a Bite, Won't You?";
+        if ($attendanceType == AttendanceType::TIME_IN->value) {
+            $successMessage = "Checked In and Ready to Shine - Welcome Aboard!";
+        } else if ($shiftType == ShiftType::AFTERNOON->value) {
+            $successMessage = "Checked Out and Tired - Rest Up for Tomorrow!";
+            $status = AttendanceStatus::ABSENT;
+        }
+
         $statusUpdated = $this->employeeService->updateAttendanceStatus($employee, $status);
 
         if (!$statusUpdated) {
             // TODO
             // Log the failure but continue (don't fail the whole request)
             // Add this to the response if possible
-        }
-
-        $successMessage = "Checked Out and Hungry - Grab a Bite, Won't You?";
-        if ($attendanceType == AttendanceType::TIME_IN->value) {
-            $successMessage = "Checked In and Ready to Shine - Welcome Aboard!";
-        } else if ($shiftType == ShiftType::AFTERNOON->value) {
-            $successMessage = "Checked Out and Tired - Rest Up for Tomorrow!";
         }
 
         return redirect()
