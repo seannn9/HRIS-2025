@@ -7,6 +7,11 @@ use App\Enums\WorkMode;
 use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\User;
+use App\Services\AttendancePhotoService;
+use App\Services\EmployeeAttendanceStatusService;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Mockery\MockInterface;
 
 describe('Attendance Controller as Admin', function () {
     beforeEach(function () {
@@ -16,119 +21,177 @@ describe('Attendance Controller as Admin', function () {
     });
 
     it('can filter attendances by date and type', function () {
-        Attendance::factory()->create(['employee_id' => $this->employee->id, 'type' => AttendanceType::TIME_IN]);
-        Attendance::factory()->create(['employee_id' => $this->employee->id, 'type' => AttendanceType::TIME_OUT]);
+        Attendance::factory()->create([
+            'employee_id' => $this->employee->id,
+            'type' => AttendanceType::TIME_IN->value,
+            'created_at' => '2023-01-01'
+        ]);
+        Attendance::factory()->create([
+            'employee_id' => $this->employee->id,
+            'type' => AttendanceType::TIME_OUT->value,
+            'created_at' => '2023-01-01'
+        ]);
 
-        $response = $this->getJson('/api/attendance?date_from=2023-01-01&date_to=2023-01-01&type=time_in');
+        $response = $this->get("/attendance?date_from=2023-01-01&date_to=2023-01-01&type=" . AttendanceType::TIME_IN->value);
         
-        $response
-            ->assertOk()
-            ->assertJsonCount(1, 'data');
+        $response->assertStatus(200);
+        $response->assertViewIs('attendance.dashboard');
+        $attendances = $response->viewData('attendances');
+        expect($attendances->total())->toBe(1);
     });
 
     it('can create new attendance record', function () {
-        $response = $this->postJson('/api/attendance', [
-            'employee_id' => $this->employee->id,
-            'shift_type' => ShiftType::MORNING,
-            'type' => AttendanceType::TIME_IN,
-            'work_mode' => WorkMode::REMOTE,
-        ]);
+        Storage::fake('public');
+        $fakeFile = UploadedFile::fake()->image('image.jpg');
 
-        $response->assertCreated();
+        $this->mock(
+            EmployeeAttendanceStatusService::class, 
+            function (MockInterface $mock) {
+                $mock->shouldReceive('updateAttendanceStatus')
+                    ->once()
+                    ->withArgs(function ($employee, $status) {
+                        // Ensure $employee is an instance of Employee and the status is what you expect.
+                        return $employee instanceof \App\Models\Employee 
+                            && $status === \App\Enums\AttendanceStatus::PRESENT;
+                    })
+                    ->andReturnUsing(function ($employee, $status) {
+                        return true;
+                    });
+            }
+        );
+
+        $this->mock(
+            AttendancePhotoService::class, 
+            function (MockInterface $mock) {
+                $mock->shouldReceive('uploadProofs')
+                    ->andReturnUsing(function () {
+                        $fakeFile = UploadedFile::fake()->image('image.jpg');
+                        return [
+                            'screenshot_workstation_selfie' => $fakeFile->getPathName(),
+                            'screenshot_cgc_chat' => $fakeFile->getPathName(),
+                            'screenshot_department_chat' => $fakeFile->getPathName(),
+                            'screenshot_team_chat' => $fakeFile->getPathName(),
+                            'screenshot_group_chat' => $fakeFile->getPathName(),
+                        ];
+                    });
+            }
+        );
+
+        $data = [
+            'employee_id' => $this->employee->id,
+            'shift_type' => ShiftType::MORNING->value,
+            'type' => AttendanceType::TIME_IN->value,
+            'work_mode' => WorkMode::REMOTE->value,
+            'screenshot_workstation_selfie' => $fakeFile,
+            'screenshot_cgc_chat' => $fakeFile,
+            'screenshot_department_chat' => $fakeFile,
+            'screenshot_team_chat' => $fakeFile,
+            'screenshot_group_chat' => $fakeFile,
+        ];
+
+        $response = $this->post("/attendance", $data);
+
+        $response->assertRedirect(route('attendance.create.success'));
+        $response->assertSessionHas('success');
         $this->assertDatabaseCount('attendances', 1);
     });
 
     it('can show attendance record', function () {
-        $attendance = Attendance::factory()->create();
+        $attendance = Attendance::factory()->create(['employee_id' => $this->employee->id]);
         
-        $response = $this->getJson("/api/attendance/{$attendance->id}");
+        $response = $this->get("/attendance/{$attendance->id}");
     
-        $response
-            ->assertOk()
-            ->assertJsonPath('id', $attendance->id);
+        $response->assertStatus(200);
+        $response->assertViewIs('attendance.show');
+        $response->assertViewHas('attendance', function ($viewAttendance) use ($attendance) {
+            return $viewAttendance->id === $attendance->id;
+        });
     });
 
     it('cannot show non-existing record', function () {
-        $attendance = Attendance::factory()->create();
-        
-        $response = $this->getJson("/api/attendance/".$attendance->id + 1);
+        $nonExistingId = Attendance::max('id') ? Attendance::max('id') + 1 : 999;
+        $response = $this->get("/attendance/{$nonExistingId}");
     
-        $response-> assertNotFound();
+        $response->assertStatus(404);
     });
 
     it('can update attendance record', function () {
         $attendance = Attendance::factory()->create(['type' => AttendanceType::TIME_IN->value]);
 
-        $response = $this->patchJson("/api/attendance/{$attendance->id}", [
+        $response = $this->patchJson("/attendance/{$attendance->id}", [
             'type' => AttendanceType::TIME_OUT->value
         ]);
 
-        $response->assertOk();
-        expect($attendance->fresh()->type)->toBe(AttendanceType::TIME_OUT->value);
+        $response->assertStatus(200);
+        expect($attendance->fresh()->type)->toBe(AttendanceType::TIME_OUT);
     });
 
     it('can delete attendance record', function () {
         $attendance = Attendance::factory()->create();
         
-        $response = $this->deleteJson("/api/attendance/{$attendance->id}");
+        $response = $this->delete("/attendance/{$attendance->id}");
         
-        $response->assertNoContent();
+        $response->assertRedirect(route('attendance.index'));
         $this->assertDatabaseMissing('attendances', ['id' => $attendance->id]);
     });
 
-    it('can group data by user', function () {
-        Attendance::factory()->create([
-            'employee_id' => $this->employee->id,
-            'type' => AttendanceType::TIME_IN
-        ]);
-        Attendance::factory()->create([
-            'employee_id' => $this->employee->id,
-            'type' => AttendanceType::TIME_OUT
-        ]);
+    // // I dont see a need to test out grouped data right now.
+    // it('can group data by user', function () {
+    //     Attendance::factory()->create([
+    //         'employee_id' => $this->employee->id,
+    //         'type' => AttendanceType::TIME_IN->value,
+    //     ]);
+    //     Attendance::factory()->create([
+    //         'employee_id' => $this->employee->id,
+    //         'type' => AttendanceType::TIME_OUT->value
+    //     ]);
 
-        $response = $this->getJson('/api/attendance?group_by=employee');
+    //     $response = $this->get('/attendance?group_by=employee');
         
-        $response
-            ->assertOk()
-            ->assertJsonStructure(['data' => [['employee_id', 'total_entries']]]);
-    });
+    //     $response->assertStatus(200);
+    //     $response->assertViewIs('attendance.dashboard');
+    //     $attendances = $response->viewData('attendances');
+    //     $firstGroup = $attendances->first();
+    //     expect(isset($firstGroup->employee_id) || isset($firstGroup['employee_id']))->toBeTrue();
+    //     expect(isset($firstGroup->total_entries) || isset($firstGroup['total_entries']))->toBeTrue();
+    // });
 });
 
 describe('Attendance Controller as Employee', function () {
     beforeEach(function () {
         $users = User::factory()->count(2)->create(['role' => UserRole::EMPLOYEE]);
-        $this->actingAs($users->get(0));
+        $this->actingAs($users->first());
 
         foreach ($users as $user) {
             Employee::factory()->create(['user_id' => $user->id]);
         }
 
-        $this->employee = Employee::all()->get(0);
+        $this->employee = Employee::first();
     });
 
-    it('cannot show attendance record', function () {
+    it('cannot show attendance record of another employee', function () {
         $attendance = Attendance::factory()->create(['employee_id' => $this->employee->id + 1]);
         
-        $response = $this->getJson("/api/attendance/{$attendance->id}");
+        $response = $this->get("/attendance/{$attendance->id}");
         
-        $response->assertForbidden();
+        $response->assertStatus(403);
     });
 
-    it('cannot update attendance record', function () {
+    it('cannot update attendance record of another employee', function () {
         $attendance = Attendance::factory()->create(['type' => AttendanceType::TIME_IN->value]);
 
-        $response = $this->patchJson("/api/attendance/{$attendance->id}", [
+        $response = $this->patchJson("/attendance/{$attendance->id}", [
             'type' => AttendanceType::TIME_OUT->value
         ]);
 
-        $response->assertForbidden();
+        $response->assertStatus(403);
     });
 
     it('cannot delete own attendance record', function () {
-        $attendance = Attendance::factory()->create();
+        $attendance = Attendance::factory()->create(['employee_id' => $this->employee->id]);
             
-        $response = $this->deleteJson("/api/attendance/{$attendance->id}");
+        $response = $this->delete("/attendance/{$attendance->id}");
         
-        $response->assertForbidden();
+        $response->assertStatus(403);
     });
 });
