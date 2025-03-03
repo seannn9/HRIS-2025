@@ -17,11 +17,14 @@ describe('CheckCreatedAttendance Middleware Test', function () {
     });
 
     it('can access if there\'s a valid session data', function() {
-        $request = new Request();
-        $request->session()->put("success", "Yes!");
-        $request->session()->put("attendance", Attendance::factory()->create());
+        $message = "Yes!";
+        $this->withSession([
+            "success" => $message,
+            "attendance" => Attendance::factory()->create()
+        ]);
 
-        $response = $this->get(route('attendance.create.success'), $request);
-        $response->assertRedirect(route('attendance.index'));
+        $response = $this->get(route('attendance.create.success'));
+        $response->assertSee($message);
+        $response->assertStatus(200);
     });
 });
