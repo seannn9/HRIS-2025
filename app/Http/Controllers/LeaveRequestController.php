@@ -36,14 +36,14 @@ class LeaveRequestController extends Controller
             'employee_id' => 'sometimes|exists:employees,id'
         ]);
 
-        // Admin sees all leave requests with full access.
+        // Employees see only their own leave requests.
         if ($user->isEmployee()) {
             $leaveRequests = LeaveRequest::where('employee_id', $user->employee->id)
                 ->with('Employee')
                 ->filter($validated)
                 ->latest();
         }
-        // Employees see only their own leave requests.
+        // Admin sees all leave requests with full access.
         else {
             $leaveRequests = LeaveRequest::with('Employee')
                 ->filter($validated)
