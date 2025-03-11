@@ -4,7 +4,9 @@
     use App\Enums\WorkMode;
 @endphp
 
-@extends('components.layout.root')
+@extends('components.layout.auth')
+
+@section('title') Attendance Dashboard @endsection
 
 @section('content')
 <div class="container mx-auto p-6" x-data="previewModal()">
@@ -124,23 +126,25 @@
       </div>
     </div>
 </div>
+@endsection
 
+@section('scripts')
 <!-- Alpine.js Component for Modal -->
 <script>
-    function previewModal() {
-      return {
-        open: false,
-        imageUrl: '',
-        imageLabel: '',
-        openModal(url, label) {
-          this.imageLabel = label;
-          this.imageUrl = url;
-          this.open = true;
-        },
-        closeModal() {
-          this.open = false;
-        }
+  function previewModal() {
+    return {
+      open: false,
+      imageUrl: '',
+      imageLabel: '',
+      openModal(url, label) {
+        this.imageLabel = label;
+        this.imageUrl = url;
+        this.open = true;
+      },
+      closeModal() {
+        this.open = false;
       }
     }
-  </script>
+  }
+</script>
 @endsection

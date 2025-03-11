@@ -5,7 +5,9 @@
     use \Carbon\Carbon;
 @endphp
 
-@extends('components.layout.root')
+@extends('components.layout.auth')
+
+@section('title') Attendance @endsection
 
 @section('content')
 <div class="container mx-auto p-6" x-data="previewModal()">

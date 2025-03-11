@@ -1,0 +1,100 @@
+<div 
+    x-data="{ open: true }" 
+    class="bg-slate-800 text-white flex-shrink-0 transition-all duration-300 overflow-hidden h-screen"
+    :class="open ? 'w-64' : 'w-20'"
+>
+    <!-- Header/Logo area -->
+    <div class="flex items-center justify-between h-16 px-4 border-b border-slate-700">
+        <div class="flex items-center overflow-hidden">
+            <div class="flex-shrink-0" :class="open ? 'w-full' : 'w-8'">
+                <img src="{{ asset('img/roc-logo.png') }}" alt="ROC.PH" class="h-auto max-h-10">
+            </div>
+        </div>
+        <button @click="open = !open" class="text-gray-400 hover:text-white">
+            <svg x-show="open" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
+            <svg x-show="!open" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+        </button>
+    </div>
+    
+    <!-- Navigation Menu -->
+    <nav class="py-4">
+        <ul>
+            <!-- Dashboard -->
+            <li class="mb-1">
+                <a href="{{ route('dashboard') }}" class="flex items-center py-2 px-4 text-gray-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span class="ml-3 whitespace-nowrap" x-show="open" x-transition>Dashboard</span>
+                </a>
+            </li>
+            
+            <!-- Attendance -->
+            <li class="mb-1">
+                <a href="{{ route('attendance.index') }}" class="flex items-center py-2 px-4 text-gray-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="ml-3 whitespace-nowrap" x-show="open" x-transition>Attendance</span>
+                </a>
+            </li>
+            
+            <!-- Leave Request -->
+            <li class="mb-1">
+                <a href="{{ route('leave.index') }}" class="flex items-center py-2 px-4 text-gray-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <span class="ml-3 whitespace-nowrap" x-show="open" x-transition>Leave Request</span>
+                </a>
+            </li>
+            
+            <!-- Document -->
+            <li class="mb-1">
+                <a href="{{ route('document.index') }}" class="flex items-center py-2 px-4 text-gray-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    <span class="ml-3 whitespace-nowrap" x-show="open" x-transition>Document</span>
+                </a>
+            </li>
+            
+            <!-- Work Requests -->
+            <li class="mb-1">
+                <a href="{{ route('work-request.index') }}" class="flex items-center py-2 px-4 text-gray-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="ml-3 whitespace-nowrap" x-show="open" x-transition>Work Requests</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- User Profile and Logout -->
+    <div class="mt-auto border-t border-slate-700">
+        <!-- User Profile -->
+        <div class="flex items-center p-4 hover:bg-slate-700 rounded-md transition-colors">
+            <img class="h-8 w-8 rounded-full flex-shrink-0" src="https://ui-avatars.com/api/?name=John+Doe" alt="User avatar">
+            <div class="ml-3 overflow-hidden" x-show="open" x-transition>
+                <p class="text-sm font-medium text-white whitespace-nowrap">John Doe</p>
+                <p class="text-xs text-gray-400 whitespace-nowrap">View Profile</p>
+            </div>
+        </div>
+        
+        <!-- Logout Button -->
+        <form method="POST" action="{{ route('logout') }}" class="px-4 pb-4">
+            @csrf
+            <button type="submit" class="w-full flex items-center py-2 px-4 text-gray-300 hover:bg-red-600 hover:text-white rounded-md transition-colors">
+                <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span class="ml-3 whitespace-nowrap" x-show="open" x-transition>Logout</span>
+            </button>
+        </form>
+    </div>
+</div>

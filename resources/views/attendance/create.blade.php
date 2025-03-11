@@ -1,5 +1,11 @@
-<x-layout.auth>
-    <div class="bg-primary/20 p-6">
+@extends('components.layout.auth')
+
+@section('title') Attendance @endsection
+
+@section('content')
+    <x-slot name="header">Attendance</x-slot>
+
+    <div>
         <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg p-8">
             <div class="flex gap-4 mb-8 divide-gray-200 items-center">
                 <h1 class="text-2xl font-bold text-primary">Attendance</h1>
@@ -152,8 +158,9 @@
             </div>
         </div>
     </div>
-</x-layout.auth>
+@endsection
 
+@section('scripts')
 <script>
     function updateClock() {
         const now = new Date();
@@ -218,3 +225,4 @@
                 .join(' ');
     }
 </script>
+@endsection

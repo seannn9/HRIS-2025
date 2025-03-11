@@ -4,11 +4,12 @@
     use App\Enums\WorkMode;
 @endphp
 
-@extends('components.layout.root')
+@extends('components.layout.auth')
+
+@section('title') Edit Attendance @endsection
 
 @section('content')
 <div class="container mx-auto p-6">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Edit Attendance</h1>
     <div class="bg-white shadow rounded-lg p-6">
         <form action="{{ route('attendance.update', $attendance->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
