@@ -16,17 +16,34 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Create admin user
-        User::create([
+        User::factory()->admin()->create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
-            'role' => UserRole::ADMIN,
         ]);
 
-        // Create 10 employee users
         User::factory()
-            ->count(10)
-            ->state(['role' => UserRole::EMPLOYEE])
-            ->create();
+            ->employee()
+            ->create([
+                'name' => 'Employee User',
+                'email' => 'employee@example.com',
+                'password' => Hash::make('password'),
+            ]);
+
+        User::factory()
+            ->hr()
+            ->create([
+                'name' => 'HR User',
+                'email' => 'hr@example.com',
+                'password' => Hash::make('password'),
+            ]);
+
+        User::factory()
+            ->create([
+                'name' => 'Multi Role User',
+                'email' => 'multi@example.com',
+                'password' => Hash::make('password'),
+                'roles' => UserRole::cases()
+            ]);
     }
 }

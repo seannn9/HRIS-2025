@@ -12,4 +12,12 @@ enum UserRole: string
     {
         return array_column(self::cases(), 'value');
     }
+
+    public static function getLabel(self $case): string
+    {
+        return match ($case) {
+            self::HR => "HR",
+            default => ucfirst($case->value)
+        };
+    }
 }

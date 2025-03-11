@@ -1,5 +1,12 @@
+@php
+    use App\Enums\UserRole;
+@endphp
+
 <div 
-    x-data="{ open: true }" 
+    x-data="{ 
+        open: true,
+        showRoleModal: false
+    }" 
     class="bg-slate-800 text-white flex-shrink-0 transition-all duration-300 overflow-hidden h-screen"
     :class="open ? 'w-64' : 'w-20'"
 >
@@ -85,6 +92,22 @@
                 <p class="text-xs text-gray-400 whitespace-nowrap">View Profile</p>
             </div>
         </div>
+
+        
+        @if(count(auth()->user()->roles) > 1)
+        <div class="px-4 pb-2">
+            <button 
+                @click="showRoleModal = true" 
+                class="w-full flex items-center py-2 px-4 text-gray-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors"
+            >
+                <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7a4 4 0 100 8 4 4 0 000-8zM16 7a4 4 0 100 8 4 4 0 000-8z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11h8" />
+                </svg>
+                <span class="ml-3 whitespace-nowrap" x-show="open" x-transition>Switch Role</span>
+            </button>
+        </div>
+        @endif
         
         <!-- Logout Button -->
         <form method="POST" action="{{ route('logout') }}" class="px-4 pb-4">
@@ -96,5 +119,59 @@
                 <span class="ml-3 whitespace-nowrap" x-show="open" x-transition>Logout</span>
             </button>
         </form>
+    </div>
+
+    <!-- Role Switcher Modal -->
+    <div 
+        x-show="showRoleModal" 
+        class="fixed inset-0 z-50 overflow-y-auto"
+        style="display: none;"
+    >
+        <div class="flex items-center justify-center min-h-screen">
+            <!-- Backdrop -->
+            <div 
+                @click="showRoleModal = false" 
+                class="fixed inset-0 bg-black/60 transition-opacity"
+            ></div>
+            
+            <!-- Modal Content -->
+            <div class="relative bg-white rounded-lg shadow-xl w-80 max-w-md z-10">
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Select Role</h3>
+                    <p class="text-sm text-gray-500">Choose which role to use</p>
+                </div>
+                
+                <div class="p-4">
+                    <div class="space-y-2">
+                        @foreach(auth()->user()->roles as $role)
+                        <form action="{{ route('role.switch') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="role" value="{{ $role }}">
+                            <button 
+                                type="submit"
+                                class="{{ auth()->user()->getActiveRole() == $role ? 'bg-indigo-100 text-indigo-800' : 'bg-white text-gray-800' }} w-full text-left px-4 py-2 rounded-md hover:bg-gray-100 transition-colors flex items-center"
+                            >
+                                <span class="font-medium">{{ UserRole::getLabel(UserRole::tryFrom($role)) }}</span>
+                                @if(auth()->user()->getActiveRole() == $role)
+                                <svg class="h-5 w-5 text-indigo-800 ml-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                @endif
+                            </button>
+                        </form>
+                        @endforeach
+                    </div>
+                </div>
+                
+                <div class="p-4 border-t border-gray-200 flex justify-end">
+                    <button 
+                        @click="showRoleModal = false" 
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
