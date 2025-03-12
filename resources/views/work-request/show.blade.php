@@ -3,7 +3,9 @@
     use App\Enums\WorkType;
 @endphp
 
-@extends('components.layout.root')
+@extends('components.layout.auth')
+
+@section('title') Work Request #{{ $workRequest->id }} @endsection
 
 @section('content')
 <div class="py-8 px-6 max-w-4xl mx-auto" id="show-parent" x-cloak x-data="{ previewImage: null, isPdf: false }">

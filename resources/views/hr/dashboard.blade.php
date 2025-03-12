@@ -1,3 +1,12 @@
-<x-layout.guest>
-    Welcome HR!
-</x-layout.guest>
+@extends('components.layout.auth')
+
+@section('title') HR Dashboard @endsection
+
+@section('content')
+Welcome HR!
+{{-- ... --}}
+@endsection
+
+@section('scripts')
+{{-- ... --}}
+@endsection
