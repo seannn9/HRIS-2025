@@ -16,7 +16,7 @@ class UserRoleSwitchController extends Controller
         $role = $validated['role'];
         $request->user()->setActiveRole($role);
 
-        return redirect()->route('dashboard')
-            ->with('success', 'User role switched to '.UserRole::getLabel(UserRole::tryFrom($role)));
+        $roleLabel = UserRole::getLabel(UserRole::tryFrom($role));
+        return back()->with('success', 'User role switched to '.$roleLabel);
     }
 }
