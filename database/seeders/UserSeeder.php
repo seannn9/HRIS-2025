@@ -16,10 +16,11 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Create admin user
-        User::factory()->admin()->create([
+        User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
+            'roles' => [UserRole::ADMIN->value, UserRole::EMPLOYEE->value]
         ]);
 
         User::factory()
@@ -31,11 +32,27 @@ class UserSeeder extends Seeder
             ]);
 
         User::factory()
-            ->hr()
+            ->create([
+                'name' => 'TL User',
+                'email' => 'tl@example.com',
+                'password' => Hash::make('password'),
+                'roles' => [UserRole::TEAM_LEADER->value, UserRole::EMPLOYEE->value]
+            ]);
+
+        User::factory()
+            ->create([
+                'name' => 'GL User',
+                'email' => 'gl@example.com',
+                'password' => Hash::make('password'),
+                'roles' => [UserRole::GROUP_LEADER->value, UserRole::EMPLOYEE->value]
+            ]);
+
+        User::factory()
             ->create([
                 'name' => 'HR User',
                 'email' => 'hr@example.com',
                 'password' => Hash::make('password'),
+                'roles' => [UserRole::HR->value, UserRole::EMPLOYEE->value]
             ]);
 
         User::factory()
