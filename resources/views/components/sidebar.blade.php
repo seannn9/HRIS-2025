@@ -110,7 +110,7 @@
         @endif
         
         <!-- Logout Button -->
-        <form method="POST" action="{{ route('logout') }}" class="px-4 pb-4">
+        <form action="{{ route('logout') }}" class="px-4 pb-4">
             @csrf
             <button type="submit" class="w-full flex items-center py-2 px-4 text-gray-300 hover:bg-red-600 hover:text-white rounded-md transition-colors">
                 <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
