@@ -157,19 +157,18 @@ class User extends Authenticatable
         return session('active_role', $this->roles[0] ?? null);
     }
     
-    // Keeping these for backward compatibility
     public function isAdmin()
     {
-        return $this->hasRole(UserRole::ADMIN);
+        return $this->getActiveRole() == UserRole::ADMIN->value;
     }
 
     public function isHr()
     {
-        return $this->hasRole(UserRole::HR);
+        return $this->getActiveRole() == UserRole::HR->value;
     }
 
     public function isEmployee()
     {
-        return $this->hasRole(UserRole::EMPLOYEE);
+        return $this->getActiveRole() == UserRole::EMPLOYEE->value;
     }
 }
