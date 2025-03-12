@@ -7,6 +7,8 @@ enum UserRole: string
     case ADMIN = 'admin';
     case HR = 'hr';
     case EMPLOYEE = 'employee';
+    case TEAM_LEADER = 'team_leader';
+    case GROUP_LEADER = 'group_leader';
 
     public static function values(): array
     {
@@ -17,6 +19,8 @@ enum UserRole: string
     {
         return match ($case) {
             self::HR => "HR",
+            self::TEAM_LEADER => "Team Leader",
+            self::GROUP_LEADER => "Group Leader",
             default => ucfirst($case->value)
         };
     }

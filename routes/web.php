@@ -26,9 +26,11 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         $role = $request->user()->getActiveRole();
 
         return match ($role) {
-            UserRole::EMPLOYEE->value => view('employee.dashboard'),
-            UserRole::HR->value => view('hr.dashboard'),
-            UserRole::ADMIN->value => view('admin.dashboard'),
+            UserRole::EMPLOYEE->value => view('dashboard.employee'),
+            UserRole::HR->value => view('dashboard.hr'),
+            UserRole::ADMIN->value => view('dashboard.admin'),
+            UserRole::GROUP_LEADER->value => view('dashboard.gl'),
+            UserRole::TEAM_LEADER->value => view('dashboard.tl'),
             default => abort(403),
         };
     })->name("dashboard");
