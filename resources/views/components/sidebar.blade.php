@@ -92,9 +92,9 @@
     <div class="mt-auto border-t border-slate-700">
         <!-- User Profile -->
         <div class="flex items-center p-4 hover:bg-slate-700 rounded-md transition-colors">
-            <img class="h-8 w-8 rounded-full flex-shrink-0" src="https://ui-avatars.com/api/?name=John+Doe" alt="User avatar">
+            <img class="h-8 w-8 rounded-full flex-shrink-0" src="https://ui-avatars.com/api/?name={{ str_replace(' ', '+', auth()->user()->employee->getFullName()) }}" alt="User avatar">
             <div class="ml-3 overflow-hidden" x-show="open" x-transition>
-                <p class="text-sm font-medium text-white whitespace-nowrap">John Doe</p>
+                <p class="text-sm font-medium text-white whitespace-nowrap">{{ auth()->user()->employee->getFullName() }}</p>
                 <p class="text-xs text-gray-400 whitespace-nowrap">View Profile</p>
             </div>
         </div>
