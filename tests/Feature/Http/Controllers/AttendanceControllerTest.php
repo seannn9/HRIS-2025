@@ -15,7 +15,7 @@ use Mockery\MockInterface;
 
 describe('Attendance Controller as Admin', function () {
     beforeEach(function () {
-        $user = User::factory()->create(['role' => UserRole::ADMIN]);
+        $user = User::factory()->create(['roles' => [UserRole::ADMIN->value]]);
         $this->employee = Employee::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user);
     });
@@ -158,7 +158,7 @@ describe('Attendance Controller as Admin', function () {
 
 describe('Attendance Controller as Employee', function () {
     beforeEach(function () {
-        $users = User::factory()->count(2)->create(['role' => UserRole::EMPLOYEE]);
+        $users = User::factory()->count(2)->create(['roles' => [UserRole::EMPLOYEE->value]]);
         $this->actingAs($users->first());
 
         foreach ($users as $user) {

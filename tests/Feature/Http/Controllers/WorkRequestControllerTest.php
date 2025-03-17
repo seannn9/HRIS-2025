@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 // Factory and setup helper functions
 function createUserWithRole($role = 'admin')
 {
-    $user = User::factory()->create(['role' => $role]);
+    $user = User::factory()->create(['roles' => [$role]]);
     $employee = Employee::factory()->create(['user_id' => $user->id]);
     $user->employee = $employee;
     return $user;
