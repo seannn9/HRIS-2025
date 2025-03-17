@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\ShiftType;
-use App\Enums\AttendanceStatus;
 use App\Enums\AttendanceType;
 use App\Enums\RequestStatus;
 use App\Enums\WorkMode;
@@ -20,6 +19,7 @@ class Attendance extends Model
         'shift_type' => ShiftType::class,
         'type' => AttendanceType::class,
         'work_mode' => WorkMode::class,
+        'status' => RequestStatus::class,
     ];
 
     protected $attributes = [

@@ -75,7 +75,7 @@ class AttendanceController extends Controller
     {
         $validated = $request->validated();
 
-        $employee = $request->user()->employee()->get()->first();
+        $employee = $request->user()->employee;
         $attendanceType = $validated['type'];
         $shiftType = $validated['shift_type'];
         
@@ -87,6 +87,7 @@ class AttendanceController extends Controller
         );
 
         $attendance = Attendance::create([
+            'updated_by' => $employee->id,
             ...$validated,
             ...$paths
         ]);
