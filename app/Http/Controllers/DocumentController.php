@@ -43,7 +43,7 @@ class DocumentController extends Controller
     {
         $validated = $request->validate([
             'document_type' => ['required', new Enum(DocumentType::class)],
-            'file_path' => ['required', 'file', 'max:10240'], // 10MB max
+            'document_file' => ['required', 'file', 'max:10240'], // 10MB max
         ]);
 
         $file = $request->file('document_file');
@@ -67,8 +67,10 @@ class DocumentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Document $document)
+    public function show(Request $request, Document $document)
     {
+        if ($request->user()->cannot('view', $document)) abort(403);
+
         return view('document.show', compact('document'));
     }
 
@@ -122,7 +124,7 @@ class DocumentController extends Controller
         $document->update($data);
 
         return redirect()
-            ->route('document.index', $document)
+            ->route('document.show', $document)
             ->with('success', 'Document updated successfully.');
     }
 
