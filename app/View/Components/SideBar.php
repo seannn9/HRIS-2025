@@ -15,22 +15,6 @@ class SideBar extends Component
     {
         //
     }
-    
-    /**
-     * Check if the given route is active.
-     *
-     * @param string $route
-     * @param bool $exact
-     * @return bool
-     */
-    public function isActive($route, $exact = false)
-    {
-        if ($exact) {
-            return request()->routeIs($route);
-        }
-        
-        return request()->routeIs($route) || request()->routeIs($route.'.*');
-    }
 
     /**
      * Get the view / contents that represent the component.

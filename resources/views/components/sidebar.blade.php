@@ -34,7 +34,7 @@
             <!-- Dashboard -->
             <li class="mb-1">
                 <a href="{{ route('dashboard') }}" 
-                   class="flex items-center py-2 px-4 {{ $isActive('dashboard') ? 'bg-accent1 text-white' : 'text-gray-300 hover:bg-slate-700 hover:text-white' }} rounded-md transition-colors">
+                   class="flex items-center py-2 px-4 {{ (request()->routeIs('dashboard') || request()->routeIs('dashboard.*')) ? 'bg-accent1 text-white' : 'text-gray-300 hover:bg-slate-700 hover:text-white' }} rounded-md transition-colors">
                     <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
@@ -45,7 +45,7 @@
             <!-- Attendance -->
             <li class="mb-1">
                 <a href="{{ route('attendance.index') }}" 
-                   class="flex items-center py-2 px-4 {{ $isActive('attendance') ? 'bg-accent1 text-white' : 'text-gray-300 hover:bg-slate-700 hover:text-white' }} rounded-md transition-colors">
+                   class="flex items-center py-2 px-4 {{ (request()->routeIs('attendance') || request()->routeIs('attendance.*')) ? 'bg-accent1 text-white' : 'text-gray-300 hover:bg-slate-700 hover:text-white' }} rounded-md transition-colors">
                     <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -56,7 +56,7 @@
             <!-- Leave Request -->
             <li class="mb-1">
                 <a href="{{ route('leave.index') }}" 
-                   class="flex items-center py-2 px-4 {{ $isActive('leave') ? 'bg-accent1 text-white' : 'text-gray-300 hover:bg-slate-700 hover:text-white' }} rounded-md transition-colors">
+                   class="flex items-center py-2 px-4 {{ (request()->routeIs('leave') || request()->routeIs('leave.*')) ? 'bg-accent1 text-white' : 'text-gray-300 hover:bg-slate-700 hover:text-white' }} rounded-md transition-colors">
                     <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
@@ -67,7 +67,7 @@
             <!-- Document -->
             <li class="mb-1">
                 <a href="{{ route('document.index') }}" 
-                   class="flex items-center py-2 px-4 {{ $isActive('document') ? 'bg-accent1 text-white' : 'text-gray-300 hover:bg-slate-700 hover:text-white' }} rounded-md transition-colors">
+                   class="flex items-center py-2 px-4 {{ (request()->routeIs('document') || request()->routeIs('document.*')) ? 'bg-accent1 text-white' : 'text-gray-300 hover:bg-slate-700 hover:text-white' }} rounded-md transition-colors">
                     <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
@@ -78,7 +78,7 @@
             <!-- Work Requests -->
             <li class="mb-1">
                 <a href="{{ route('work-request.index') }}" 
-                   class="flex items-center py-2 px-4 {{ $isActive('work-request') ? 'bg-accent1 text-white' : 'text-gray-300 hover:bg-slate-700 hover:text-white' }} rounded-md transition-colors">
+                   class="flex items-center py-2 px-4 {{ (request()->routeIs('work-request') || request()->routeIs('work-request.*')) ? 'bg-accent1 text-white' : 'text-gray-300 hover:bg-slate-700 hover:text-white' }} rounded-md transition-colors">
                     <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
