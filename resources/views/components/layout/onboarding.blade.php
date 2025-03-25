@@ -9,6 +9,6 @@
         </div>
 
         <!-- Content container -->
-        @section('subcontent')
+        @yield('subcontent')
     </div>
 @endsection
