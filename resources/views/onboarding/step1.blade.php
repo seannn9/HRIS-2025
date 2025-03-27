@@ -45,10 +45,10 @@
                                 <x-form.input type="date" name="birthdate" id="birthdate" label="Date of Birth" required />
                             </div>
                             <div class="flex-1">
-                                <x-form.select class="h-9" type="select" name="gender" id="gender" label="Gender" required>
-                                    <option value="" selected disabled hidden>Choose an option</option>
+                                <x-form.select class="h-9" type="select" name="gender" label="Gender" required>
+                                    <option value="" selected disabled hidden>Choose an option</option> 
                                     @foreach (Gender::values() as $key => $value)
-                                    <option value="{{ $key }} {{ old('gender')==$key ? 'selected' : '' }}">{{ ucfirst($value) }}</option>
+                                        <option value="{{ $value }}" {{ old('gender') == $value ? 'selected' : '' }}>{{ ucfirst($value) }}</option>
                                     @endforeach
                                 </x-form.select>
                             </div>
@@ -60,10 +60,10 @@
                             </div>
 
                             <div class="flex-1">
-                                <x-form.select class="h-9" type="select" name="marital_status" id="marital_status" label="Marital Status" required>
+                                <x-form.select class="h-9" type="select" name="marital_status" label="Marital Status" required>
                                     <option value="" selected disabled hidden>Choose an option</option>
                                     @foreach (MaritalStatus::values() as $key => $value)
-                                    <option value="{{ $key }} {{ old('marital_status')==$key ? 'selected' : '' }}">{{ ucfirst($value) }}</option>
+                                        <option value="{{ $value }}" {{ old('marital_status') == $value ? 'selected' : '' }}>{{ ucfirst($value) }}</option>
                                     @endforeach
                                 </x-form.select>
                             </div>
