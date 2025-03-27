@@ -25,11 +25,9 @@ class OnboardingController extends Controller
 {
     public function showStep1(Request $request)
     {
-        $genders = Gender::values();
-        $marital_status = MaritalStatus::values();
         // If we're returning to step 1, retrieve data from session
         $data = $request->session()->get('onboarding_data.personal', []);
-        return view('onboarding.step1', compact('data', 'genders', 'marital_status'));
+        return view('onboarding.step1', compact('data'));
     }
     
     public function processStep1(Request $request)
@@ -39,6 +37,10 @@ class OnboardingController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
+            'contact_number' => 'required|string|max:20',
+            'birthdate' => 'required|date',
+            'gender' => 'required|in:' . implode(',', Gender::values()),
+            'address' => 'required|string',
             // 'password' => [
             //     'required',
             //     'confirmed',
@@ -49,10 +51,6 @@ class OnboardingController extends Controller
             //         ->symbols()
             //         ->uncompromised()
             // ],
-            'contact_number' => 'required|string|max:20',
-            'birthdate' => 'required|date',
-            'gender' => 'required|in:' . implode(',', Gender::values()),
-            'address' => 'required|string',
             // 'emergency_contact_name' => 'required|string|max:255',
             // 'emergency_contact_number' => 'required|string|max:20',
         ]);
@@ -84,7 +82,7 @@ class OnboardingController extends Controller
             'mother_name' => 'nullable|string|max:255',
             'mother_occupation' => 'nullable|string|max:255',
             'number_of_children' => 'nullable|integer|min:0',
-            'marital_status' => 'required|string',
+            'marital_status' => 'nullable|string',
             'spouse_name' => 'nullable|string|max:255',
             'spouse_occupation' => 'nullable|string|max:255',
             'number_of_children' => 'nullable|integer|min:0',
